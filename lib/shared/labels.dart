@@ -51,3 +51,25 @@ class DrawerText {
 
 }
 
+
+class PotholesScreenText {
+
+  static String titleForm = "UBICACIÓN DEL DAÑO";
+  static String directionField = "Dirección";
+  static String observationField = "Observaciones";
+  static String directionFieldDesc = "Indícanos con exactitud el lugar donde se encuentra el daño.";
+
+  static String moreDataTitle = "MÁS DATOS";
+  static String nameAndLastNameField = "Nombre y apellido";
+  static String nameAndLastNameFieldDesc = "Indícanos quién es la persona que reporta el daño.";
+  static String optionDropDown = "Selecciona una opción...";
+  static String phonefield = "Celular";
+  static String emailField = "Correo electrónico";
+  static String motiveField = "Motivo del daño";
+  static String evidenceOptions = "Evidencia";
+  static String takePhotoOption = "Tomar Foto";
+  static String galleryOption = "Galería";
+
+
+}
+
