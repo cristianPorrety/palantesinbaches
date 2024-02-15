@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/screens/huecosbaches/huecosbachesscreen.dart';
 import 'package:pilasconelhueco/screens/mapwidget.dart';
 import 'package:pilasconelhueco/shared/labels.dart';
@@ -36,9 +37,9 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   }
 
   List<Widget> widgets = [
-      DirectionBody(),
-      MoreDataScreen(),
-      ConfirmDataScreen()
+    DirectionBody(),
+    MoreDataScreen(),
+    ConfirmDataScreen()
   ];
 
   // Street, sublocality, subadministrative area, administrative area, country
@@ -46,19 +47,124 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(80.0),
+        child: AppBar(
+          backgroundColor: ColorsPalet.primaryColor,
+          elevation: 1,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
+            ),
+          ),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, size: 30, color: Colors.white),
+            onPressed: () {
+              Navigator.pop(
+                context,
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
+              );
+            },
+          ),
+          centerTitle: true,
+          title: Text(
+            PotholesScreenText.moreDataTitle,
+            style: TextStyle(
+                color: ColorsPalet.backgroundColor,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
       body: Column(
         children: [
           Expanded(
-              child: HeaderFragment(
-            text: MainPageText.hoolTitle,
-          )),
-          Expanded(
             flex: 8,
-            child: ListView(
-                physics: ClampingScrollPhysics(), 
-                children: [
-                  MoreDataScreen(),
-                  /*Container(
+            child: ListView(physics: const ClampingScrollPhysics(), children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: widgets[index],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  height: 100,
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        SizedBox(
+                          width: 150,
+                          height: 70,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  if (index < widgets.length - 1) {
+                                    setState(() {
+                                      index++;
+                                    });
+                                  } 
+                                },
+                                child: Container(
+                                  width: 140,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                      color: ColorsPalet.primaryColor,
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Center(
+                                      child: Text(
+                                    (index < widgets.length - 1) ? "continuar" : "finalizar",
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        color: ColorsPalet.backgroundColor,
+                                        fontWeight: FontWeight.bold),
+                                  )),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 12,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 50),
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: 3,
+                                    itemBuilder: (context, i) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(left: 5),
+                                        child: Container(
+                                          width: 8,
+                                          height: 8,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: (i == index)
+                                                ? ColorsPalet.primaryColor
+                                                : ColorsPalet.itemColor,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 30,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )
+              /*Container(
                           width: 53,
                           height: 53,
                           child: Center(
@@ -80,7 +186,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                             ),
                           ),
                   )*/
-                ]),
+            ]),
           ),
         ],
       ),
@@ -144,4 +250,3 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     );
   }
 }
-

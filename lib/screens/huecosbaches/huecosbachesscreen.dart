@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pilasconelhueco/screens/huecosbaches/camerautils.dart';
 import 'package:pilasconelhueco/screens/mapwidget.dart';
 import 'package:pilasconelhueco/shared/labels.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
@@ -170,8 +171,25 @@ class _MoreDataScreenState extends State<MoreDataScreen> {
     return menuItems;
   }
 
-
   List<File> selectedFiles = [];
+
+  void addFile(File file) {
+    setState(() {
+      selectedFiles.add(file);
+    });
+  }
+
+  void addMultipleFiles(List<File> files) {
+    setState(() {
+      selectedFiles.addAll(files);
+    });
+  }
+
+  void deleteFile(int index) {
+    setState(() {
+      selectedFiles.removeAt(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -225,11 +243,59 @@ class _MoreDataScreenState extends State<MoreDataScreen> {
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
               )),
           _rowsOptions(),
+          Padding(
+            padding: const EdgeInsets.only(top: 10, bottom: 20),
+            child: Container(
+              height: selectedFiles.length * 40,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: getPhotosTakedListTile(),
+            ),
+          )
         ],
       ),
     );
   }
 
+  Widget getPhotosTakedListTile() {
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      physics: const BouncingScrollPhysics(),
+      itemCount: selectedFiles.length,
+      itemBuilder: (context, i) {
+        print(selectedFiles[i].path);
+        return Padding(
+          padding: const EdgeInsets.only(left: 2.0, right: 2.0, bottom: 7),
+          child: IntrinsicWidth(
+            child: Container(
+              width: 23,
+              height: 27,
+              padding: EdgeInsets.only(left: 10, right: 10),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: ColorsPalet.backgroundColor,
+                  border: Border.all(color: ColorsPalet.primaryColor)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(selectedFiles[i]
+                      .path
+                      .substring(selectedFiles[i].path.length - 8)),
+                  IconButton(
+                    onPressed: () {
+                      deleteFile(i);
+                    },
+                    icon: Icon(Icons.close),
+                    iconSize: 15,
+                    color: ColorsPalet.primaryColor,
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   void _openModal(BuildContext context) {
     showModalBottomSheet(
@@ -243,6 +309,10 @@ class _MoreDataScreenState extends State<MoreDataScreen> {
             physics: const BouncingScrollPhysics(),
             children: [
               GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  CameraUtils.recordVideo(context, addFile, selectedFiles);
+                },
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 15),
                   child: Container(
@@ -272,6 +342,10 @@ class _MoreDataScreenState extends State<MoreDataScreen> {
                 ),
               ),
               GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  CameraUtils.capturePhoto(addFile, selectedFiles);
+                },
                 child: Container(
                   height: 80,
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -503,6 +577,9 @@ class _MoreDataScreenState extends State<MoreDataScreen> {
             ),
           ),
           GestureDetector(
+            onTap: () {
+              CameraUtils.getMedia(addMultipleFiles, selectedFiles);
+            },
             child: Container(
               decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
