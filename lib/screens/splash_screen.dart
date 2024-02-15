@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../onboarding/onboardingpage.dart';
 import 'huecosbaches.dart';
 class SplashScreen extends StatefulWidget {
   @override
@@ -13,7 +14,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(Duration(seconds: 2), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => ReportPotholesScreen()), // Reemplaza 'YourNextScreen()' con la clase de tu siguiente pantalla
+        MaterialPageRoute(builder: (context) =>OnboardingScreen()),
       );
     });
   }

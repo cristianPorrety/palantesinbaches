@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:pilasconelhueco/screens/DataScreen.dart';
+import 'package:pilasconelhueco/screens/otherApps.dart';
+import 'package:pilasconelhueco/screens/reports.dart';
+import '../models/Report.dart';
+import '../screens/contact.dart';
 import '../shared/styles.dart';
 
-class MyDrawer extends StatelessWidget {
+class MyDrawer extends StatefulWidget {
+  @override
+  _MyDrawerState createState() => _MyDrawerState();
+}
+
+class _MyDrawerState extends State<MyDrawer> {
+  String selectedItem = '';
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -24,11 +36,11 @@ class MyDrawer extends StatelessWidget {
                     Icon(Icons.arrow_back, color: ColorsPalet.primaryColor, size: 30,),
                     SizedBox(width: 10.0),
                     Expanded(
-                        child: Image.asset(
-                          'assets/img/tittle_drawer.png',
-                          width: 300.0,
-                          height: 40.0,
-                        ),
+                      child: Image.asset(
+                        'assets/img/tittle_drawer.png',
+                        width: 300.0,
+                        height: 40.0,
+                      ),
                     ),
                   ],
                 ),
@@ -84,24 +96,24 @@ class MyDrawer extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                      Icon(
-                        Icons.facebook,
-                        size: 30,
-                        color: Colors.blue,
-                      ),
-                      Icon(
-                        Icons.facebook,
-                        size: 30,
-                        color: Colors.pink,
-                      ),
-                      Icon(
-                        Icons.facebook,
-                        size: 30,
-                        color: Colors.black,
-                      ),
-                  ],
+                        Icon(
+                          Icons.facebook,
+                          size: 30,
+                          color: ColorsPalet.primaryColor,
+                        ),
+                        Icon(
+                          Icons.facebook,
+                          size: 30,
+                          color: ColorsPalet.primaryColor,
+                        ),
+                        Icon(
+                          Icons.facebook,
+                          size: 30,
+                          color: ColorsPalet.primaryColor,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
                 ),
               ],
             ),
@@ -111,13 +123,49 @@ class MyDrawer extends StatelessWidget {
     );
   }
 
+
+
   Widget _buildSelectionItem(String text) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 5.0),
-      child: Text(
-        text,
-        style: TextStyle(fontSize: 18.0),
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            selectedItem = text;
+          });
+          if (text == 'MÁS APLICACIONES') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => OtherAppsPage()),
+            );
+          }
+          if (text == 'LINEA DE ATENCIÓN') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Contacts()),
+            );
+          }
+          if (text == 'MIS REPORTES') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Reports(reports: reports)),
+            );
+          }
+          if (text == 'MIS DATOS') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => DataScreen()),
+            );
+          }
+        },
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 18.0,
+          ),
+        ),
       ),
     );
   }
+
 }
