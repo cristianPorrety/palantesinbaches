@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/onboarding/onboardingdata.dart';
 import 'package:pilasconelhueco/shared/labels.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
@@ -98,7 +99,10 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                       (index == items.length - 1) 
                         ? GestureDetector(
                               onTap: () {
-                                
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                                );
                               },
                               child: Text(OnboardingPage.continueText, 
                                           style: const TextStyle(fontSize: 15, 

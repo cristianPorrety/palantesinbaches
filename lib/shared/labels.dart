@@ -73,3 +73,29 @@ class PotholesScreenText {
 
 }
 
+class OtherAppsText{
+  static String title = "OTRAS APPS";
+}
+
+class ContactInfoTexts {
+  static String title = "CONTACTOS";
+  static const String alcaldiaDistrital = "Alcaldía Distrital de Santa Marta";
+  static const String nit = "NIT 891780009";
+  static const String horarioAtencion = "Horario de Atención:";
+  static const String horarioAtencionres ="Lunes a Viernes de 8:00 a.m. a 12:30 p.m. y de 2:00 p.m. a 6:00 p.m.";
+  static const String lineaNacional = "Línea Nacional gratuita:";
+  static const String lineaNacionalres ="018000955532";
+  static const String lineaFija = "Línea fija en Santa Marta:";
+  static const String lineaFijares ="(+57) (5) 4209600 ext. 1212";
+  static const String correo = "Atención al ciudadano correo:";
+  static const String correores ="atencionalciudadano@santamarta.gov.co";
+  static const String politicas = "Políticas de seguridad de la información y protección de datos personales.";
+  static const String derechosReservados = "Todos los derechos reservados © 2024";
+}
+
+class ReportsText{
+  static String title = "MIS REPORTES";
+}
+class DataText{
+  static String title = "MIS DATOS";
+}
