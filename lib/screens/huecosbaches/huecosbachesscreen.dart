@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pilasconelhueco/models/ReportSaveModel.dart';
 import 'package:pilasconelhueco/screens/huecosbaches/camerautils.dart';
 import 'package:pilasconelhueco/screens/mapwidget.dart';
 import 'package:pilasconelhueco/shared/labels.dart';
@@ -600,12 +601,62 @@ class _MoreDataScreenState extends State<MoreDataScreen> {
   }
 }
 
-class ConfirmDataScreen extends StatelessWidget {
-  const ConfirmDataScreen({super.key});
+class ConfirmDataScreen extends StatefulWidget {
+  ConfirmDataScreen(
+      {super.key,
+      required this.filesSelected,
+      required this.deleteFile,
+      required this.confirmDataModel});
+
+  late List<File> filesSelected;
+  late Function(int) deleteFile;
+  late ConfirmDataModel confirmDataModel;
 
   @override
+  // ignore: library_private_types_in_public_api
+  _ConfirmDataScreenState createState() {
+    return _ConfirmDataScreenState();
+  }
+}
+
+class _ConfirmDataScreenState extends State<ConfirmDataScreen> {
+  @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    return ListView(
+      children: const [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: Text(ConfirmDataLabels.title),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 5),
+          child: Text(ConfirmDataLabels.nameLabel),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 5),
+          child: Text(ConfirmDataLabels.cellphone),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 5),
+          child: Text(ConfirmDataLabels.email),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 5),
+          child: Text(ConfirmDataLabels.damageUbi),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 5),
+          child: Text(ConfirmDataLabels.damageMotive),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 5),
+          child: Text(ConfirmDataLabels.reportDate),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 5),
+          child: Text(ConfirmDataLabels.evidence),
+        ),
+      ],
+    );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/screens/huecosbaches/huecosbachesscreen.dart';
@@ -23,6 +25,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       TextEditingController();
   bool isEmpty = false;
   int index = 0;
+  List<File> filesSelected = [];
 
   String getTextOfDirection() {
     print("hellooooooo");
@@ -39,7 +42,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   List<Widget> widgets = [
     DirectionBody(),
     MoreDataScreen(),
-    ConfirmDataScreen()
+    ConfirmDataScreen(filesSelected: filesSelected,)
   ];
 
   // Street, sublocality, subadministrative area, administrative area, country
@@ -108,7 +111,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                                     setState(() {
                                       index++;
                                     });
-                                  } 
+                                  }
                                 },
                                 child: Container(
                                   width: 140,
@@ -118,7 +121,9 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                                       borderRadius: BorderRadius.circular(10)),
                                   child: Center(
                                       child: Text(
-                                    (index < widgets.length - 1) ? "continuar" : "finalizar",
+                                    (index < widgets.length - 1)
+                                        ? "continuar"
+                                        : "finalizar",
                                     style: TextStyle(
                                         fontSize: 17,
                                         color: ColorsPalet.backgroundColor,
