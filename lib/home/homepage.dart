@@ -154,7 +154,7 @@ class MenuFragment extends StatelessWidget {
                         MaterialPageRoute(builder: (context) => ReportPotholesScreen()),
                       );
                     },
-                  child: menuItem(ImagesPath.carreteraImg, MainPageText.hoolTitle, MainPageText.atentionLineDesc)
+                  child: menuItem(ImagesPath.carreteraImg, MainPageText.hoolTitle, MainPageText.hoolDesc)
                 ),
                 GestureDetector(
                     onTap: () {
@@ -178,7 +178,7 @@ class MenuFragment extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => Reports(reports: reports)),
                     );
                   },
-                  child: menuItem(ImagesPath.reportsImg, MainPageText.myReportsTitle, MainPageText.myDataDesc),
+                  child: menuItem(ImagesPath.reportsImg, MainPageText.myReportsTitle, MainPageText.myReportsDesc),
                 ), GestureDetector(
                   onTap: () {
                     Navigator.pushReplacement(
@@ -186,7 +186,7 @@ class MenuFragment extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => Contacts()),
                     );
                   },
-                  child: menuItem(ImagesPath.atentionlineImg, MainPageText.hoolTitle, MainPageText.hoolDesc),
+                  child: menuItem(ImagesPath.atentionlineImg, MainPageText.atentionLineTitle, MainPageText.atentionLineDesc),
                 ),
               ],
             ),
