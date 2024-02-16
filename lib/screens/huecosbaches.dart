@@ -41,7 +41,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   int index = 0;
   List<File> filesSelected = [];
   ConfirmDataModel? datamodel;
-
+  String selectedOption = "Selecciona una opción....";
 
 
   String getTextOfDirection() {
@@ -184,7 +184,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                                           dataModelSecondScreen.cellphone = "+${_countrycodeFieldController.text} ${_cellphoneFieldController.text}";
                                           dataModelSecondScreen.email = _emailFieldController.text;
                                           dataModelSecondScreen.evidences = filesSelected;
-                                          dataModelSecondScreen.motive = "sample";
+                                          dataModelSecondScreen.motive = selectedOption;
                                           dataModelSecondScreen.reportDate = DateTime.now().toString();
                                           datamodel = dataModelSecondScreen;
                                           index++;
@@ -758,91 +758,94 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
 
   Widget _MotiveTextField() {
     return GestureDetector(
-      onTap: () {
-        getModalScreen();
+      onTap: () async {
+        final selected = await getModalScreen();
+        if (selected != null) {
+          setState(() {
+            selectedOption = selected;
+          });
+        }
       },
       child: Container(
-          margin: const EdgeInsets.only(bottom: 10, top: 10),
-          decoration: BoxDecoration(
-              color: ColorsPalet.backgroundColor,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: ColorsPalet.primaryColor),
-              boxShadow: const [
-                BoxShadow(color: Colors.black12, blurRadius: 0),
-              ]),
-          child: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 3),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text("aa"), Icon(Icons.arrow_right)],
-            ),
-          )),
+        margin: const EdgeInsets.only(bottom: 10, top: 10),
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: ColorsPalet.primaryColor),
+          boxShadow: const [
+            BoxShadow(color: Colors.black12, blurRadius: 0),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              //Se almacena la opción se leccionada
+              Text(selectedOption),
+              Icon(Icons.arrow_right),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-  Future<dynamic> getModalScreen() {
-    return showDialog(
+  Future<String?> getModalScreen() {
+    return showDialog<String>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Opciones'),
+          title: Text('Opciones', style: TextStyle(fontWeight: FontWeight.bold, color:ColorsPalet.primaryColor)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 title: Text('Falla en el mantenimiento'),
                 onTap: () {
-                  // Lógica para la opción Falla en el mantenimiento
-                  Navigator.pop(context);
+                  Navigator.pop(context, 'Falla en el mantenimiento');
                 },
               ),
               ListTile(
                 title: Text('Falla en el diseño'),
                 onTap: () {
-                  // Lógica para la opción Falla en el diseño
-                  Navigator.pop(context);
+                  Navigator.pop(context, 'Falla en el diseño');
                 },
               ),
               ListTile(
                 title: Text('Tráfico pesado'),
                 onTap: () {
-                  // Lógica para la opción Tráfico pesado
-                  Navigator.pop(context);
+                  Navigator.pop(context, 'Tráfico pesado');
                 },
               ),
               ListTile(
                 title: Text('Condiciones climáticas o inundaciones'),
                 onTap: () {
-                  // Lógica para la opción Condiciones climáticas o inundaciones
-                  Navigator.pop(context);
+                  Navigator.pop(context, 'Condiciones climáticas o inundaciones');
                 },
               ),
               ListTile(
                 title: Text('Vegetación no controlada'),
                 onTap: () {
-                  // Lógica para la opción Vegetación no controlada
-                  Navigator.pop(context);
+                  Navigator.pop(context, 'Vegetación no controlada');
                 },
               ),
               ListTile(
                 title: Text('Envejecimiento'),
                 onTap: () {
-                  // Lógica para la opción Envejecimiento
-                  Navigator.pop(context);
+                  Navigator.pop(context, 'Envejecimiento');
                 },
               ),
               ListTile(
                 title: Text('Vandalismo'),
                 onTap: () {
-                  // Lógica para la opción Vandalismo
-                  Navigator.pop(context);
+                  Navigator.pop(context, 'Vandalismo');
                 },
               ),
               ListTile(
                 title: Text('Otro'),
                 onTap: () {
-                  // Lógica para la opción Otro
-                  Navigator.pop(context);
+                  Navigator.pop(context, 'Otro');
                 },
               ),
             ],
