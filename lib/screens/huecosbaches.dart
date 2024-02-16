@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,8 @@ import 'package:pilasconelhueco/shared/styles.dart';
 import 'package:pilasconelhueco/sharedfragments/headerfragment.dart';
 import 'package:pilasconelhueco/util/alerts.dart';
 import 'package:pilasconelhueco/util/inheritedwiidget.dart';
+
+import '../models/Report.dart';
 
 class ReportPotholesScreen extends StatefulWidget {
   const ReportPotholesScreen({super.key});
@@ -191,8 +195,12 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                                         });
                                       }  
                                     }
+                                  case 2 : {
+                                    _Dialog_finalizar(context);
+                                  }
                                   }
                                 },
+
                                 child: Container(
                                   width: 140,
                                   height: 30,
@@ -205,7 +213,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                                                                               (index < widgets.length - 1)
                                           ? "continuar"
                                           : "finalizar",
-                                                                              style: TextStyle(
+
+                                          style: TextStyle(
                                           fontSize: 17,
                                           color: ColorsPalet.backgroundColor,
                                           fontWeight: FontWeight.bold),
@@ -279,6 +288,63 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       ),
     );
   }
+  void _Dialog_finalizar(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 60.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                ),
+                child: Image.asset(
+                  'assets/img/fi_check-circle.png',
+                  width: 60.0,
+                  height: 60.0,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    Text(
+                      DialogFinalizarText.reportcompleted,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: ColorsPalet.primaryColor,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    SizedBox(height: 10.0),
+                    Text(
+                      "Número de reporte  ",
+                      style: TextStyle(
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+  Timer(Duration(seconds: 1), () {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    });
+  }
+
 
 
   Widget _directionBody() {

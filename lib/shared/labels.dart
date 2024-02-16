@@ -107,3 +107,6 @@ class ReportsText {
 class DataText {
   static String title = "MIS DATOS";
 }
+class DialogFinalizarText{
+  static String reportcompleted="¡REPORTE REALIZADO!";
+}
