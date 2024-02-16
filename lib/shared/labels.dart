@@ -36,8 +36,8 @@ class MainPageText {
   static String atentionLineDesc =
       "Si tu solicitud no ha sido respondida, comunícate con nosotros";
   static String otherAppsTitle = "OTRAS APLICACIONES";
-  static String otherAppsDesc =
-      "Si tu solicitud no ha sido respondida, comunícate con nosotros";
+  static String otherAppsDesc = "Conoce otras aplicaciones útiles para mejorar tu experiencia en la ciudad.";
+
 }
 
 class DrawerText {
