@@ -31,7 +31,7 @@ class RestMapRepository {
         return latLng;
       } else {
         ToastManager.showToast(context, "Las coordenadas proporcionadas no pudieron ser obtenidas.");
-        return null;
+        return LatLng(0, 0);
       }
     } else {
       throw Exception('Error en la solicitud de geocodificación');

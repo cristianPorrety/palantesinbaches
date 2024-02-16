@@ -128,7 +128,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
           ),
           centerTitle: true,
           title: Text(
-            PotholesScreenText.moreDataTitle,
+            MainPageText.hoolTitle,
             style: TextStyle(
                 color: ColorsPalet.backgroundColor,
                 fontWeight: FontWeight.bold),
@@ -349,20 +349,21 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
               ),
             ],
           ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+              },
+              child: Text('Aceptar', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+            ),
+          ],
         );
       },
     );
-
-  Timer(Duration(seconds: 1), () {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
-    });
   }
-
-
-
   Widget _directionBody() {
     return Column(
       children: [
@@ -433,7 +434,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
           SizedBox(
               width: double.infinity,
               child: Text(
-                PotholesScreenText.observationField,
+                PotholesScreenText.phonefield,
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
               )),

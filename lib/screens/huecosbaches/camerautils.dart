@@ -67,7 +67,7 @@ class _VideoRecorderPageState extends State<VideoRecorderPage> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
   late String outputPath;
-  Icon _iconStop = Icon(Icons.stop);
+  Icon _iconStop = Icon(Icons.circle);
   Icon _iconRecording = Icon(Icons.stop);
   bool _isRecording = false;
 

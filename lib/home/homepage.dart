@@ -141,79 +141,79 @@ class MenuFragment extends StatelessWidget {
           color: ColorsPalet.backgroundColor
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text(MainPageText.title, style: const TextStyle(fontWeight: FontWeight.w700),),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                GestureDetector(
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => ReportPotholesScreen()),
-                      );
-                    },
-                  child: menuItem(ImagesPath.carreteraImg, MainPageText.hoolTitle, MainPageText.hoolDesc)
-                ),
-                GestureDetector(
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => DataScreen()),
-                      );
-                    },
-
-                  child: menuItem(ImagesPath.mydataImg, MainPageText.myDataTitle, MainPageText.myDataDesc)
-                )
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                GestureDetector(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Text(MainPageText.title, style: const TextStyle(fontWeight: FontWeight.w700),),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              GestureDetector(
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => Reports(reports: reports)),
+                      MaterialPageRoute(builder: (context) => ReportPotholesScreen()),
                     );
                   },
-                  child: menuItem(ImagesPath.reportsImg, MainPageText.myReportsTitle, MainPageText.myReportsDesc),
-                ), GestureDetector(
+                child: menuItem(ImagesPath.carreteraImg, MainPageText.hoolTitle, MainPageText.hoolDesc)
+              ),
+              GestureDetector(
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => Contacts()),
+                      MaterialPageRoute(builder: (context) => DataScreen()),
                     );
                   },
-                  child: menuItem(ImagesPath.atentionlineImg, MainPageText.atentionLineTitle, MainPageText.atentionLineDesc),
-                ),
-              ],
-            ),
-
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => OtherAppsPage()),
-                );
-              },
-              child: menuItem(ImagesPath.anotherAppImg, MainPageText.otherAppsTitle, MainPageText.otherAppsDesc),
-            ),
-            Column(
-              children: [
-                Text(
-                  AlcaldiaSantaMartaText.mainText,
-                  style: TextStyle(color: ColorsPalet.primaryColor, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  AlcaldiaSantaMartaText.secondText,
-                  style: TextStyle(color: ColorsPalet.primaryColor, fontSize: 11.1),
-                ),
-              ],
-            ),
-          ],
-        ),
+                  
+                child: menuItem(ImagesPath.mydataImg, MainPageText.myDataTitle, MainPageText.myDataDesc)
+              )
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => Reports(reports: reports)),
+                  );
+                },
+                child: menuItem(ImagesPath.reportsImg, MainPageText.myReportsTitle, MainPageText.myReportsDesc),
+              ), GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => Contacts()),
+                  );
+                },
+                child: menuItem(ImagesPath.atentionlineImg, MainPageText.atentionLineTitle, MainPageText.atentionLineDesc),
+              ),
+            ],
+          ),
+                  
+          GestureDetector(
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => OtherAppsPage()),
+              );
+            },
+            child: menuItem(ImagesPath.anotherAppImg, MainPageText.otherAppsTitle, MainPageText.otherAppsDesc),
+          ),
+          Column(
+            children: [
+              Text(
+                AlcaldiaSantaMartaText.mainText,
+                style: TextStyle(color: ColorsPalet.primaryColor, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                AlcaldiaSantaMartaText.secondText,
+                style: TextStyle(color: ColorsPalet.primaryColor, fontSize: 11.1),
+              ),
+            ],
+          ),
+        ],
+                  ),
       ),
     );
   }
@@ -224,13 +224,13 @@ Widget menuItem(String img, String text, String desc) {
 
   return SizedBox(
     width: 130,
-    height: 140,
+    height: 145,
     child: Column(
       children: [
         SizedBox(width: 70, height: 70,child: Image.asset(img),),
-        Text(text, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),),
+        Text(text, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
         Expanded(
-          child: Container(padding: const EdgeInsets.only(top: 5), width: 100, child: Text(desc, style: const TextStyle(fontSize: 8), textAlign: TextAlign.center,))
+          child: Container(padding: const EdgeInsets.only(top: 5), width: 100, child: Text(desc, style: const TextStyle(fontSize: 10), textAlign: TextAlign.center,))
         )
       ],
     ),

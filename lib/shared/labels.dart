@@ -56,7 +56,7 @@ class PotholesScreenText {
   static String nameAndLastNameFieldDesc =
       "Indícanos quién es la persona que reporta el daño.";
   static String optionDropDown = "Selecciona una opción...";
-  static String phonefield = "Celular";
+  static String phonefield = "Número de teléfono";
   static String emailField = "Correo electrónico";
   static String motiveField = "Motivo del daño";
   static String evidenceOptions = "Evidencia";
@@ -91,7 +91,7 @@ class ConfirmDataLabels {
   static const String title = "CONFIRMA LOS DATOS";
   static const String nameLabel = "Nombre y apellido:";
   static const String cellphone = "Número de teléfono:";
-  static const String email = "Horario de Atención:";
+  static const String email = "Correo electrónico:";
   static const String damageUbi = "Ubicación del daño:";
   static const String damageMotive = "Motivo de daño:";
   static const String reportDate = "Fecha de reporte:";
