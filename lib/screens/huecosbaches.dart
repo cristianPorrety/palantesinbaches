@@ -15,6 +15,7 @@ import 'package:pilasconelhueco/shared/styles.dart';
 import 'package:pilasconelhueco/sharedfragments/headerfragment.dart';
 import 'package:pilasconelhueco/util/alerts.dart';
 import 'package:pilasconelhueco/util/inheritedwiidget.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/Report.dart';
 
@@ -119,7 +120,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, size: 30, color: Colors.white),
             onPressed: () {
-              Navigator.pop(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const HomeScreen()),
               );
@@ -289,6 +290,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     );
   }
   void _Dialog_finalizar(BuildContext context) {
+    String uniqueId = Uuid().v4();
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -323,7 +325,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                     ),
                     SizedBox(height: 10.0),
                     Text(
-                      "Número de reporte  ",
+                      "Número de reporte: RE${uniqueId.substring(uniqueId.length - 11)}",
                       style: TextStyle(
                         fontSize: 16.0,
                       ),
@@ -463,62 +465,89 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     return SizedBox(
       width: double.infinity,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 10),
-            child: Text(ConfirmDataLabels.title),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Text(ConfirmDataLabels.title, style: TextStyle(color: ColorsPalet.primaryColor, fontSize: 20,fontWeight: FontWeight.bold)),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: Text(ConfirmDataLabels.nameLabel),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Text(ConfirmDataLabels.nameLabel,style: TextStyle(color: ColorsPalet.itemColorBlack2, fontSize: 18,fontWeight: FontWeight.bold)),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: Text(datamodel!.name!),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Text(datamodel!.name!,style: TextStyle(color: ColorsPalet.itemColorBlack, fontSize: 16,fontWeight: FontWeight.bold)),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: Text(ConfirmDataLabels.cellphone),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Text(ConfirmDataLabels.cellphone,style: TextStyle(color: ColorsPalet.itemColorBlack2, fontSize: 18,fontWeight: FontWeight.bold)),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: Text(datamodel!.cellphone!),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Text(datamodel!.cellphone!,style: TextStyle(color: ColorsPalet.itemColorBlack, fontSize: 16,fontWeight: FontWeight.bold)),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: Text(ConfirmDataLabels.email),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Text(ConfirmDataLabels.email,style: TextStyle(color: ColorsPalet.itemColorBlack2, fontSize: 18,fontWeight: FontWeight.bold)),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: Text(datamodel!.email!),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Text(datamodel!.email!,style: TextStyle(color: ColorsPalet.itemColorBlack, fontSize: 16,fontWeight: FontWeight.bold)),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: Text(ConfirmDataLabels.damageUbi),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Text(ConfirmDataLabels.damageUbi,style: TextStyle(color: ColorsPalet.itemColorBlack2, fontSize: 18,fontWeight: FontWeight.bold)),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: Text(datamodel!.address!),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Text(datamodel!.address!,style: TextStyle(color: ColorsPalet.itemColorBlack, fontSize: 16,fontWeight: FontWeight.bold)),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: Text(ConfirmDataLabels.damageMotive),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Text(ConfirmDataLabels.damageMotive,style: TextStyle(color: ColorsPalet.itemColorBlack2, fontSize: 18,fontWeight: FontWeight.bold)),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: Text(datamodel!.motive!),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Text(datamodel!.motive!,style: TextStyle(color: ColorsPalet.itemColorBlack, fontSize: 16,fontWeight: FontWeight.bold)),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: Text(ConfirmDataLabels.reportDate),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Text(ConfirmDataLabels.reportDate,style: TextStyle(color: ColorsPalet.itemColorBlack2, fontSize: 18,fontWeight: FontWeight.bold)),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: Text(datamodel!.reportDate!),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Text(datamodel!.reportDate!,style: TextStyle(color: ColorsPalet.itemColorBlack, fontSize: 16,fontWeight: FontWeight.bold)),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: Text(ConfirmDataLabels.evidence),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Text(ConfirmDataLabels.evidence, style: TextStyle(color: ColorsPalet.primaryColor, fontSize: 20,fontWeight: FontWeight.bold)),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: RichText(
+              text: TextSpan(
+                style: TextStyle(color: Colors.black),
+                children: [
+                  TextSpan(
+                    text: ConfirmDataLabels.important,
+                    style: TextStyle(
+                      color: ColorsPalet.primaryColor,
+                      fontWeight: FontWeight.bold,
+                        fontSize: 13,
+
+                    ),
+                  ),
+                  TextSpan(
+                    text: " " + ConfirmDataLabels.importantNote,
+                    style: TextStyle(
+                      color: ColorsPalet.itemColorBlack,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
           Padding(
               padding: const EdgeInsets.only(top: 10, bottom: 20),
@@ -527,7 +556,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 child: getPhotosTakedListTile(),
               ),
-            )
+            ),
         ],
       ),
     );

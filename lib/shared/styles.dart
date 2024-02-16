@@ -6,6 +6,8 @@ class ColorsPalet {
   static var secondaryColor = const Color.fromARGB(255, 132, 198, 246);
   static var backgroundColor = Colors.white;
   static var itemColor = const Color.fromARGB(255, 87, 87, 87);
+  static var itemColorBlack= Colors.black54;
+  static var itemColorBlack2= Colors.black;
 
 }
 

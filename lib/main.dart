@@ -24,8 +24,9 @@ class MyApp extends StatelessWidget {
         primaryColor: ColorsPalet.primaryColor,
         useMaterial3: true,
       ),
-      home: ReportPotholesScreen(),
-      //home:HomeScreen(),
+
+      //home: ReportPotholesScreen(),
+     home:SplashScreen(),
 
     );
   }

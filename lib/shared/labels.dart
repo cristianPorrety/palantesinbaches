@@ -89,14 +89,14 @@ class ContactInfoTexts {
 
 class ConfirmDataLabels {
   static const String title = "CONFIRMA LOS DATOS";
-  static const String nameLabel = "Nombre y apellido";
-  static const String cellphone = "Celular";
+  static const String nameLabel = "Nombre y apellido:";
+  static const String cellphone = "Número de teléfono:";
   static const String email = "Horario de Atención:";
-  static const String damageUbi = "Ubicación del daño";
-  static const String damageMotive = "Motivo de daño";
-  static const String reportDate = "Fecha de reporte";
+  static const String damageUbi = "Ubicación del daño:";
+  static const String damageMotive = "Motivo de daño:";
+  static const String reportDate = "Fecha de reporte:";
   static const String evidence = "Evidencia";
-  static const String important = "IMPORTANTE";
+  static const String important = "IMPORTANTE: ";
   static const String importantNote = "Confirma que la información brindada esté correcta, de lo contrario por favor corrígela.";
 }
 
