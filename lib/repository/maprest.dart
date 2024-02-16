@@ -1,14 +1,17 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:pilasconelhueco/shared/keys.dart';
 
+import '../util/alerts.dart';
+
 class RestMapRepository {
 
 
-  static Future<LatLng> getCoordinates(String address, GoogleMapController mapController) async {
+  static Future<LatLng?> getCoordinates(String address, GoogleMapController mapController, BuildContext context) async {
     final response = await http.get(
       Uri.parse('https://maps.googleapis.com/maps/api/geocode/json?address=$address&key=$GOOGLEAPIKEY'),
     );
@@ -27,7 +30,8 @@ class RestMapRepository {
 
         return latLng;
       } else {
-        throw Exception('No se pudieron obtener las coordenadas');
+        ToastManager.showToast(context, "Las coordenadas proporcionadas no pudieron ser obtenidas.");
+        return null;
       }
     } else {
       throw Exception('Error en la solicitud de geocodificación');

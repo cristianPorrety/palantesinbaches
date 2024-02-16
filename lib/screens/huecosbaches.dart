@@ -150,8 +150,22 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                   height: 100,
                   child: Center(
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        (index > 0) ?
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, left: 8.0),
+                      child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            if (index > 0) {
+                              index--;
+                            }
+                          });
+                        },
+                        icon: Icon(Icons.arrow_back),
+                      ),
+                    ) :
                         const SizedBox(
                           width: 30,
                         ),

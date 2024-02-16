@@ -62,7 +62,7 @@ class _MapFragmentState extends State<MapFragment> {
             children: [
               GestureDetector(
                 onTap: () => RestMapRepository.getCoordinates(
-                    directionTyped(), mapController),
+                    directionTyped(), mapController, context),
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(10)),

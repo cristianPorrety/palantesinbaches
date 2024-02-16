@@ -85,7 +85,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   child: Image.asset(
                     'assets/img/logo_drawer.png',
                     width: 240.0,
-                    height: 110.0,
+                    height: 140.0,
                   ),
                 ),
                 SizedBox(height: 20.0),
