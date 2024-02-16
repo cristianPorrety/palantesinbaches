@@ -8,17 +8,10 @@ class ConfirmDataModel {
   String? email;
   String? address;
   String? motive;
+  String? observation;
   String? reportDate;
   List<File>? evidences;
 
-  ConfirmDataModel({
-    required this.name,
-    required this.cellphone,
-    required this.email,
-    required this.address,
-    required this.motive,
-    required this.reportDate,
-    required this.evidences,
-  });
+  ConfirmDataModel();
 
 }

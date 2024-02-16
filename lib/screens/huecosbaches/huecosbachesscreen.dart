@@ -7,6 +7,7 @@ import 'package:pilasconelhueco/screens/huecosbaches/camerautils.dart';
 import 'package:pilasconelhueco/screens/mapwidget.dart';
 import 'package:pilasconelhueco/shared/labels.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
+import 'package:pilasconelhueco/util/inheritedwiidget.dart';
 
 class DirectionBody extends StatefulWidget {
   @override
@@ -161,6 +162,11 @@ class _MoreDataScreenState extends State<MoreDataScreen> {
   final TextEditingController _emailFieldController = TextEditingController();
   String selectedValue = "USA";
   bool isEmpty = false;
+  late Function(int) deleteFile;
+  late Function(File) addFile;
+  late Function(List<File>) addMultipleFiles;
+  late List<File> selectedFiles;
+  late ConfirmDataModel? confirmDataModel;
 
   List<DropdownMenuItem<String>> get dropdownItems {
     List<DropdownMenuItem<String>> menuItems = [
@@ -172,24 +178,13 @@ class _MoreDataScreenState extends State<MoreDataScreen> {
     return menuItems;
   }
 
-  List<File> selectedFiles = [];
-
-  void addFile(File file) {
-    setState(() {
-      selectedFiles.add(file);
-    });
-  }
-
-  void addMultipleFiles(List<File> files) {
-    setState(() {
-      selectedFiles.addAll(files);
-    });
-  }
-
-  void deleteFile(int index) {
-    setState(() {
-      selectedFiles.removeAt(index);
-    });
+  @override
+  void didChangeDependencies() {
+    deleteFile = ThreeScreensInheritedWidget.of(context).deleteFile;
+    addFile = ThreeScreensInheritedWidget.of(context).addFile;
+    addMultipleFiles = ThreeScreensInheritedWidget.of(context).addMultipleFiles;
+    
+    super.didChangeDependencies();
   }
 
   @override
@@ -602,15 +597,10 @@ class _MoreDataScreenState extends State<MoreDataScreen> {
 }
 
 class ConfirmDataScreen extends StatefulWidget {
-  ConfirmDataScreen(
-      {super.key,
-      required this.filesSelected,
-      required this.deleteFile,
-      required this.confirmDataModel});
 
-  late List<File> filesSelected;
-  late Function(int) deleteFile;
-  late ConfirmDataModel confirmDataModel;
+  ConfirmDataScreen(
+      {super.key});
+
 
   @override
   // ignore: library_private_types_in_public_api
@@ -620,6 +610,12 @@ class ConfirmDataScreen extends StatefulWidget {
 }
 
 class _ConfirmDataScreenState extends State<ConfirmDataScreen> {
+
+  late List<File> filesSelected;
+  late Function(int) deleteFile;
+  late ConfirmDataModel confirmDataModel;
+
+
   @override
   Widget build(BuildContext context) {
     return ListView(
