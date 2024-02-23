@@ -18,19 +18,18 @@ class MapFragment extends StatefulWidget {
   _MapFragmentState createState() {
     // ignore: no_logic_in_create_state
     return _MapFragmentState(
-        directionTyped: directionTyped, setAddress: setAddress);
+        directionTyped: directionTyped);
   }
 }
 
 class _MapFragmentState extends State<MapFragment> {
   static const double defaultZoom = 13.0;
-  Set<Marker> markers = Set();
+  Set<Marker> markers = {};
   static const LatLng staMarta = LatLng(11.239912, -74.194023);
   late GoogleMapController mapController;
   late String Function() directionTyped;
-  late Function(String) setAddress;
 
-  _MapFragmentState({required this.directionTyped, required this.setAddress});
+  _MapFragmentState({required this.directionTyped});
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -116,6 +115,6 @@ class _MapFragmentState extends State<MapFragment> {
     List<Placemark> placemarks =
         await placemarkFromCoordinates(latLng.latitude, latLng.longitude);
     // Street, sublocality, subadministrative area, administrative area, country
-    setAddress("${placemarks[0].street} ${placemarks[0].subLocality}, ${placemarks[0].subAdministrativeArea}, ${placemarks[0].administrativeArea}, ${placemarks[0].country}");
+    widget.setAddress("${placemarks[0].street} ${placemarks[0].subLocality}, ${placemarks[0].subAdministrativeArea}, ${placemarks[0].administrativeArea}, ${placemarks[0].country}");
   }
 }

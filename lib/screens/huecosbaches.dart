@@ -6,8 +6,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/models/ReportSaveModel.dart';
+import 'package:pilasconelhueco/repository/maprest.dart';
 import 'package:pilasconelhueco/screens/huecosbaches/camerautils.dart';
 import 'package:pilasconelhueco/screens/huecosbaches/huecosbachesscreen.dart';
 import 'package:pilasconelhueco/screens/mapwidget.dart';
@@ -35,7 +37,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       TextEditingController();
   final TextEditingController _obsercationFieldController =
       TextEditingController();
-   final TextEditingController _nameAndLastNameFieldController =
+  final TextEditingController _nameAndLastNameFieldController =
       TextEditingController();
   final TextEditingController _countrycodeFieldController =
       TextEditingController();
@@ -43,12 +45,14 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       TextEditingController();
   final TextEditingController _emailFieldController = TextEditingController();
   late List<Widget Function()> widgets;
+  LatLng? coordinates;
   bool isEmpty = false;
   int index = 0;
   List<File> filesSelected = [];
   ConfirmDataModel? datamodel;
   String selectedOption = "Selecciona una opción....";
-  var textInputFormatter = FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\sáéíóúÁÉÍÓÚüÜ]'));
+  var textInputFormatter =
+      FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\sáéíóúÁÉÍÓÚüÜ]'));
   String getTextOfDirection() {
     print("hellooooooo");
     return _directionFieldController.text;
@@ -61,6 +65,12 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     });
   }
 
+  void setLatLng(LatLng coordinates) {
+    setState(() {
+      print(coordinates);
+      coordinates = coordinates;
+    });
+  }
 
   void addFile(File file) {
     setState(() {
@@ -68,14 +78,11 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     });
   }
 
-
   void setConfirmData(ConfirmDataModel dataModel) {
     setState(() {
       datamodel = datamodel;
     });
   }
-
-
 
   void addMultipleFiles(List<File> files) {
     setState(() {
@@ -93,13 +100,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   void initState() {
     super.initState();
     // Initialize the variable in the initState method
-    widgets = [
-    _directionBody,
-    _moreData,
-    _confirmData
-  ];
+    widgets = [_directionBody, _moreData, _confirmData];
   }
-
 
   // Street, sublocality, subadministrative area, administrative area, country
 
@@ -141,9 +143,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
             flex: 8,
             child: ListView(physics: const ClampingScrollPhysics(), children: [
               Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: widgets[index]()
-              ),
+                  padding: const EdgeInsets.only(top: 10),
+                  child: widgets[index]()),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
@@ -152,23 +153,24 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        (index > 0) ?
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0, left: 8.0),
-                      child: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            if (index > 0) {
-                              index--;
-                            }
-                          });
-                        },
-                        icon: Icon(Icons.arrow_back),
-                      ),
-                    ) :
-                        const SizedBox(
-                          width: 30,
-                        ),
+                        (index > 0)
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 8.0, left: 8.0),
+                                child: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      if (index > 0) {
+                                        index--;
+                                      }
+                                    });
+                                  },
+                                  icon: Icon(Icons.arrow_back),
+                                ),
+                              )
+                            : const SizedBox(
+                                width: 30,
+                              ),
                         SizedBox(
                           width: 150,
                           height: 70,
@@ -177,41 +179,75 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  switch(index) {
-                                    case 0 : {
-                                      if(_directionFieldController.text.isEmpty || _obsercationFieldController.text.isEmpty) {
-                                        ToastManager.showToast(context, "faltan agregar campos.");
-                                      } else {
-                                        setState(() {
-                                          ConfirmDataModel dataModelFirstScreen = ConfirmDataModel();
-                                          dataModelFirstScreen.address = _directionFieldController.text;
-                                          dataModelFirstScreen.observation = _obsercationFieldController.text;
-                                          datamodel = dataModelFirstScreen;
-                                          index++;
-                                        });
-                                      }
-                                    }
-                                    case 1:
+                                  switch (index) {
+                                    case 0:
                                       {
-                                        if (_nameAndLastNameFieldController.text.isEmpty ||
-                                            _countrycodeFieldController.text.isEmpty ||
-                                            _cellphoneFieldController.text.isEmpty ||
-                                            _emailFieldController.text.isEmpty ||
-                                            filesSelected.isEmpty ||
-                                            _cellphoneFieldController.text.length != 10 ||
-                                            !_isValidEmail(_emailFieldController.text)) {
-                                          ToastManager.showToast(context, "Los datos ingresados no son correctos, o están vacíos");
+                                        if (_directionFieldController
+                                                .text.isEmpty ||
+                                            _obsercationFieldController
+                                                .text.isEmpty) {
+                                          ToastManager.showToast(context,
+                                              "faltan agregar campos.");
+                                        } else if (coordinates == null) {
+                                          ToastManager.showToast(context,
+                                              "no se ha seleccionado un sitio en especifico.");
                                         } else {
                                           setState(() {
-                                            ConfirmDataModel dataModelSecondScreen = ConfirmDataModel();
-                                            dataModelSecondScreen.address = datamodel!.address;
-                                            dataModelSecondScreen.observation = datamodel!.observation;
-                                            dataModelSecondScreen.name = _nameAndLastNameFieldController.text;
-                                            dataModelSecondScreen.cellphone = "+${_countrycodeFieldController.text} ${_cellphoneFieldController.text}";
-                                            dataModelSecondScreen.email = _emailFieldController.text;
-                                            dataModelSecondScreen.evidences = filesSelected;
-                                            dataModelSecondScreen.motive = selectedOption;
-                                            dataModelSecondScreen.reportDate = DateTime.now().toString();
+                                            ConfirmDataModel
+                                                dataModelFirstScreen =
+                                                ConfirmDataModel();
+                                            dataModelFirstScreen.address =
+                                                _directionFieldController.text;
+                                            dataModelFirstScreen.observation =
+                                                _obsercationFieldController
+                                                    .text;
+                                            dataModelFirstScreen.latLng =
+                                                coordinates;
+                                            datamodel = dataModelFirstScreen;
+                                            index++;
+                                          });
+                                        }
+                                      }
+                                    case 1:
+                                      {
+                                        if (_nameAndLastNameFieldController
+                                                .text.isEmpty ||
+                                            _countrycodeFieldController
+                                                .text.isEmpty ||
+                                            _cellphoneFieldController
+                                                .text.isEmpty ||
+                                            _emailFieldController
+                                                .text.isEmpty ||
+                                            filesSelected.isEmpty ||
+                                            _cellphoneFieldController
+                                                    .text.length !=
+                                                10 ||
+                                            !_isValidEmail(
+                                                _emailFieldController.text)) {
+                                          ToastManager.showToast(context,
+                                              "Los datos ingresados no son correctos, o están vacíos");
+                                        } else {
+                                          setState(() {
+                                            ConfirmDataModel
+                                                dataModelSecondScreen =
+                                                ConfirmDataModel();
+                                            dataModelSecondScreen.address =
+                                                datamodel!.address;
+                                            dataModelSecondScreen.observation =
+                                                datamodel!.observation;
+                                            dataModelSecondScreen.name =
+                                                _nameAndLastNameFieldController
+                                                    .text;
+                                            dataModelSecondScreen.cellphone =
+                                                "+${_countrycodeFieldController.text} ${_cellphoneFieldController.text}";
+                                            dataModelSecondScreen.email =
+                                                _emailFieldController.text;
+                                            dataModelSecondScreen.evidences =
+                                                filesSelected;
+                                            dataModelSecondScreen.motive =
+                                                selectedOption;
+                                            dataModelSecondScreen.reportDate =
+                                                DateTime.now().toString();
                                             datamodel = dataModelSecondScreen;
                                             index++;
                                           });
@@ -220,14 +256,14 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                                     case 2:
                                       {
                                         if (filesSelected.isEmpty) {
-                                          ToastManager.showToast(context, "Debe agregar al menos un evidencia.");
+                                          ToastManager.showToast(context,
+                                              "Debe agregar al menos un evidencia.");
                                         } else {
                                           _Dialog_finalizar(context);
                                         }
                                       }
                                   }
                                 },
-
                                 child: Container(
                                   width: 140,
                                   height: 30,
@@ -236,17 +272,16 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                                       borderRadius: BorderRadius.circular(10)),
                                   child: Center(
                                       child: GestureDetector(
-                                        child: Text(
-                                                                              (index < widgets.length - 1)
+                                    child: Text(
+                                      (index < widgets.length - 1)
                                           ? "continuar"
                                           : "finalizar",
-
-                                          style: TextStyle(
+                                      style: TextStyle(
                                           fontSize: 17,
                                           color: ColorsPalet.backgroundColor,
                                           fontWeight: FontWeight.bold),
-                                                                            ),
-                                      )),
+                                    ),
+                                  )),
                                 ),
                               ),
                               SizedBox(
@@ -315,6 +350,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       ),
     );
   }
+
   void _Dialog_finalizar(BuildContext context) {
     String uniqueId = Uuid().v4();
     showDialog(
@@ -329,8 +365,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(20.0),
-                decoration: BoxDecoration(
-                ),
+                decoration: BoxDecoration(),
                 child: Image.asset(
                   'assets/img/fi_check-circle.png',
                   width: 60.0,
@@ -353,9 +388,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                     Text(
                       "Número de reporte: RE${uniqueId.substring(uniqueId.length - 11)}",
                       style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold
-                      ),
+                          fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -378,7 +411,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 child: Text(
                   'Aceptar',
                   style: TextStyle(
@@ -441,7 +475,6 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       ],
     );
   }
-
 
   Widget _moreData() {
     return Padding(
@@ -515,59 +548,115 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         children: [
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            child: Text(ConfirmDataLabels.title, style: TextStyle(color: ColorsPalet.primaryColor, fontSize: 20,fontWeight: FontWeight.bold)),
+            child: Text(ConfirmDataLabels.title,
+                style: TextStyle(
+                    color: ColorsPalet.primaryColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            child: Text(ConfirmDataLabels.nameLabel,style: TextStyle(color: ColorsPalet.itemColorBlack2, fontSize: 18,fontWeight: FontWeight.bold)),
+            child: Text(ConfirmDataLabels.nameLabel,
+                style: TextStyle(
+                    color: ColorsPalet.itemColorBlack2,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            child: Text(datamodel!.name!,style: TextStyle(color: ColorsPalet.itemColorBlack, fontSize: 16,fontWeight: FontWeight.bold)),
+            child: Text(datamodel!.name!,
+                style: TextStyle(
+                    color: ColorsPalet.itemColorBlack,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            child: Text(ConfirmDataLabels.cellphone,style: TextStyle(color: ColorsPalet.itemColorBlack2, fontSize: 18,fontWeight: FontWeight.bold)),
+            child: Text(ConfirmDataLabels.cellphone,
+                style: TextStyle(
+                    color: ColorsPalet.itemColorBlack2,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            child: Text(datamodel!.cellphone!,style: TextStyle(color: ColorsPalet.itemColorBlack, fontSize: 16,fontWeight: FontWeight.bold)),
+            child: Text(datamodel!.cellphone!,
+                style: TextStyle(
+                    color: ColorsPalet.itemColorBlack,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            child: Text(ConfirmDataLabels.email,style: TextStyle(color: ColorsPalet.itemColorBlack2, fontSize: 18,fontWeight: FontWeight.bold)),
+            child: Text(ConfirmDataLabels.email,
+                style: TextStyle(
+                    color: ColorsPalet.itemColorBlack2,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            child: Text(datamodel!.email!,style: TextStyle(color: ColorsPalet.itemColorBlack, fontSize: 16,fontWeight: FontWeight.bold)),
+            child: Text(datamodel!.email!,
+                style: TextStyle(
+                    color: ColorsPalet.itemColorBlack,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            child: Text(ConfirmDataLabels.damageUbi,style: TextStyle(color: ColorsPalet.itemColorBlack2, fontSize: 18,fontWeight: FontWeight.bold)),
+            child: Text(ConfirmDataLabels.damageUbi,
+                style: TextStyle(
+                    color: ColorsPalet.itemColorBlack2,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            child: Text(datamodel!.address!,style: TextStyle(color: ColorsPalet.itemColorBlack, fontSize: 16,fontWeight: FontWeight.bold)),
+            child: Text(datamodel!.address!,
+                style: TextStyle(
+                    color: ColorsPalet.itemColorBlack,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            child: Text(ConfirmDataLabels.damageMotive,style: TextStyle(color: ColorsPalet.itemColorBlack2, fontSize: 18,fontWeight: FontWeight.bold)),
+            child: Text(ConfirmDataLabels.damageMotive,
+                style: TextStyle(
+                    color: ColorsPalet.itemColorBlack2,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            child: Text(datamodel!.motive!,style: TextStyle(color: ColorsPalet.itemColorBlack, fontSize: 16,fontWeight: FontWeight.bold)),
+            child: Text(datamodel!.motive!,
+                style: TextStyle(
+                    color: ColorsPalet.itemColorBlack,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            child: Text(ConfirmDataLabels.reportDate,style: TextStyle(color: ColorsPalet.itemColorBlack2, fontSize: 18,fontWeight: FontWeight.bold)),
+            child: Text(ConfirmDataLabels.reportDate,
+                style: TextStyle(
+                    color: ColorsPalet.itemColorBlack2,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            child: Text(datamodel!.reportDate!,style: TextStyle(color: ColorsPalet.itemColorBlack, fontSize: 16,fontWeight: FontWeight.bold)),
+            child: Text(datamodel!.reportDate!,
+                style: TextStyle(
+                    color: ColorsPalet.itemColorBlack,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            child: Text(ConfirmDataLabels.evidence, style: TextStyle(color: ColorsPalet.primaryColor, fontSize: 20,fontWeight: FontWeight.bold)),
+            child: Text(ConfirmDataLabels.evidence,
+                style: TextStyle(
+                    color: ColorsPalet.primaryColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
@@ -580,8 +669,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                     style: TextStyle(
                       color: ColorsPalet.primaryColor,
                       fontWeight: FontWeight.bold,
-                        fontSize: 13,
-
+                      fontSize: 13,
                     ),
                   ),
                   TextSpan(
@@ -596,18 +684,17 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
             ),
           ),
           Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 20),
-              child: Container(
-                height: filesSelected.length * 45,
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: getPhotosTakedListTile(),
-              ),
+            padding: const EdgeInsets.only(top: 10, bottom: 20),
+            child: Container(
+              height: filesSelected.length * 45,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: getPhotosTakedListTile(),
             ),
+          ),
         ],
       ),
     );
   }
-
 
   Widget _DirectionTextField() {
     return Container(
@@ -665,7 +752,6 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       ),
     );
   }
-
 
   Widget getPhotosTakedListTile() {
     return ListView.builder(
@@ -867,7 +953,10 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                     focusedBorder: OutlineInputBorder(
                         borderSide:
                             BorderSide(color: ColorsPalet.primaryColor)),
-                    errorText: (_cellphoneFieldController.text.isNotEmpty && _cellphoneFieldController.text.length != 10) ? '' : null,
+                    errorText: (_cellphoneFieldController.text.isNotEmpty &&
+                            _cellphoneFieldController.text.length != 10)
+                        ? ''
+                        : null,
                     border: const OutlineInputBorder()),
                 cursorColor: ColorsPalet.primaryColor,
               ),
@@ -877,7 +966,6 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       ),
     );
   }
-
 
   Widget _EmailTextField() {
     return Container(
@@ -902,12 +990,15 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                 borderSide: BorderSide(color: ColorsPalet.primaryColor),
               ),
               errorBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.red), // Borde rojo cuando hay error
+                borderSide: BorderSide(
+                    color: Colors.red), // Borde rojo cuando hay error
               ),
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey), // Borde gris cuando no hay error
+                borderSide: BorderSide(
+                    color: Colors.grey), // Borde gris cuando no hay error
               ),
-              errorText: (_emailFieldController.text.isNotEmpty && !_isValidEmail(_emailFieldController.text))
+              errorText: (_emailFieldController.text.isNotEmpty &&
+                      !_isValidEmail(_emailFieldController.text))
                   ? 'Formato de correo no válido'
                   : null, // Usamos null para no mostrar el mensaje de error cuando no hay error
               border: const OutlineInputBorder(),
@@ -923,7 +1014,6 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     RegExp regex = RegExp(r'^[a-zA-Z0-9._%+-]+@gmail\.com$');
     return regex.hasMatch(input);
   }
-
 
   Widget _MotiveTextField() {
     return GestureDetector(
@@ -965,14 +1055,18 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Opciones', style: TextStyle(fontWeight: FontWeight.bold, color:ColorsPalet.primaryColor)),
+          title: Text('Opciones',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: ColorsPalet.primaryColor)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 title: Text('Condiciones climáticas o inundaciones'),
                 onTap: () {
-                  Navigator.pop(context, 'Condiciones climáticas o inundaciones');
+                  Navigator.pop(
+                      context, 'Condiciones climáticas o inundaciones');
                 },
               ),
               ListTile(
