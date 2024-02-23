@@ -35,79 +35,81 @@ class Contacts extends StatelessWidget {
           ),
         ),
       ),
-      body: Container(
-        alignment: Alignment.topCenter,
-        padding: EdgeInsets.only(top: 30, left: 20, right: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Image.asset('assets/img/logo_Stm.png'),
-            Divider(height:50,),
-            SizedBox(height: 60,),
-            RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
+      body: SingleChildScrollView(
+        child: Container(
+          alignment: Alignment.topCenter,
+          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Image.asset('assets/img/logo_Stm.png'),
+              Divider(height: 50,),
+              SizedBox(height: 60,),
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(text: "${ContactInfoTexts.alcaldiaDistrital}\n", style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextSpan(text: "${ContactInfoTexts.nit}\n\n"),
+                    TextSpan(text: "${ContactInfoTexts.horarioAtencion}\n\n", style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextSpan(text: "${ContactInfoTexts.horarioAtencionres}\n\n"),
+                    TextSpan(text: "${ContactInfoTexts.lineaNacional}\n\n", style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextSpan(text: "${ContactInfoTexts.lineaNacionalres}\n\n"),
+                    TextSpan(text: "${ContactInfoTexts.lineaFija}\n\n", style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextSpan(text: "${ContactInfoTexts.lineaFijares}\n\n"),
+                    TextSpan(text: "${ContactInfoTexts.correo}\n\n", style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextSpan(text: "${ContactInfoTexts.correores}\n\n"),
+                    TextSpan(text: "${ContactInfoTexts.politicas}\n\n"),
+                    TextSpan(text: "${ContactInfoTexts.derechosReservados}"),
+                  ],
                 ),
-                children: <TextSpan>[
-                  TextSpan(text: "${ContactInfoTexts.alcaldiaDistrital}\n", style: TextStyle(fontWeight: FontWeight.bold)),
-                  TextSpan(text: "${ContactInfoTexts.nit}\n\n"),
-                  TextSpan(text: "${ContactInfoTexts.horarioAtencion}\n\n", style: TextStyle(fontWeight: FontWeight.bold)),
-                  TextSpan(text: "${ContactInfoTexts.horarioAtencionres}\n\n"),
-                  TextSpan(text: "${ContactInfoTexts.lineaNacional}\n\n", style: TextStyle(fontWeight: FontWeight.bold)),
-                  TextSpan(text: "${ContactInfoTexts.lineaNacionalres}\n\n"),
-                  TextSpan(text: "${ContactInfoTexts.lineaFija}\n\n", style: TextStyle(fontWeight: FontWeight.bold)),
-                  TextSpan(text: "${ContactInfoTexts.lineaFijares}\n\n"),
-                  TextSpan(text: "${ContactInfoTexts.correo}\n\n", style: TextStyle(fontWeight: FontWeight.bold)),
-                  TextSpan(text: "${ContactInfoTexts.correores}\n\n"),
-                  TextSpan(text: "${ContactInfoTexts.politicas}\n\n"),
-                  TextSpan(text: "${ContactInfoTexts.derechosReservados}"),
+              ),
+              SizedBox(height: 60,),
+              Divider(height: 50,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      // Redireccionar a Instagram
+                      launch('https://www.instagram.com/santamartadtch');
+                    },
+                    child: Image.asset(
+                      'assets/img/instagram.png',
+                      width: 60,
+                      height: 60,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      // Redireccionar a Facebook
+                      launch('https://www.pressreader.com/@santamartadtch');
+                    },
+                    child: Image.asset(
+                      'assets/img/facebook.png',
+                      width: 60,
+                      height: 60,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      // Redireccionar a Twitter
+                      launch('https://twitter.com/SantaMartaDTCH');
+                    },
+                    child: Image.asset(
+                      'assets/img/twitter.png',
+                      width: 60,
+                      height: 60,
+                    ),
+                  ),
                 ],
               ),
-            ),
-            SizedBox(height: 60,),
-            Divider(height:50,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    // Redireccionar a Instagram
-                    launch('https://www.instagram.com/tu_usuario');
-                  },
-                  child: Image.asset(
-                    'assets/img/instagram.png',
-                    width: 60,
-                    height: 60,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    // Redireccionar a Facebook
-                    launch('https://www.facebook.com/mariajose.lopezavila.94');
-                  },
-                  child: Image.asset(
-                    'assets/img/facebook.png',
-                    width: 60,
-                    height: 60,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    // Redireccionar a Twitter
-                    launch('https://www.twitter.com/tu_usuario');
-                  },
-                  child: Image.asset(
-                    'assets/img/twitter.png',
-                    width: 60,
-                    height: 60,
-                  ),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

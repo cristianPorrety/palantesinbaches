@@ -224,7 +224,7 @@ Widget menuItem(String img, String text, String desc) {
 
   return SizedBox(
     width: 130,
-    height: 145,
+    height: 165,
     child: Column(
       children: [
         SizedBox(width: 70, height: 70,child: Image.asset(img),),

@@ -225,7 +225,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                                             !_isValidEmail(
                                                 _emailFieldController.text)) {
                                           ToastManager.showToast(context,
-                                              "Los datos ingresados no son correctos, o están vacíos");
+                                              "Los datos ingresados no son correctos, o están incompletos");
                                         } else {
                                           setState(() {
                                             ConfirmDataModel
@@ -375,6 +375,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
               Padding(
                 padding: EdgeInsets.all(20.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
                       DialogFinalizarText.reportcompleted,
@@ -385,10 +386,15 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                       ),
                     ),
                     SizedBox(height: 10.0),
-                    Text(
-                      "Número de reporte: RE${uniqueId.substring(uniqueId.length - 11)}",
-                      style: TextStyle(
-                          fontSize: 18.0, fontWeight: FontWeight.bold),
+                    Center(
+                      child: Text(
+                        "Número de reporte: RE${uniqueId.substring(uniqueId.length - 11)}",
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black45,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -404,7 +410,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                textStyle: TextStyle(color: ColorsPalet.primaryColor),
+                backgroundColor: ColorsPalet.primaryColor,
                 elevation: 3,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

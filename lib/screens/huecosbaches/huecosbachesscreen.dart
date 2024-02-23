@@ -507,71 +507,74 @@ class _MoreDataScreenState extends State<MoreDataScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Opciones'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text('Falla en el mantenimiento'),
-                onTap: () {
-                  // Lógica para la opción Falla en el mantenimiento
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('Falla en el diseño'),
-                onTap: () {
-                  // Lógica para la opción Falla en el diseño
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('Tráfico pesado'),
-                onTap: () {
-                  // Lógica para la opción Tráfico pesado
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('Condiciones climáticas o inundaciones'),
-                onTap: () {
-                  // Lógica para la opción Condiciones climáticas o inundaciones
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('Vegetación no controlada'),
-                onTap: () {
-                  // Lógica para la opción Vegetación no controlada
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('Envejecimiento'),
-                onTap: () {
-                  // Lógica para la opción Envejecimiento
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('Vandalismo'),
-                onTap: () {
-                  // Lógica para la opción Vandalismo
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('Otro'),
-                onTap: () {
-                  // Lógica para la opción Otro
-                  Navigator.pop(context);
-                },
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: Text('Falla en el mantenimiento'),
+                  onTap: () {
+                    // Lógica para la opción Falla en el mantenimiento
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Falla en el diseño'),
+                  onTap: () {
+                    // Lógica para la opción Falla en el diseño
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Tráfico pesado'),
+                  onTap: () {
+                    // Lógica para la opción Tráfico pesado
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Condiciones climáticas o inundaciones'),
+                  onTap: () {
+                    // Lógica para la opción Condiciones climáticas o inundaciones
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Vegetación no controlada'),
+                  onTap: () {
+                    // Lógica para la opción Vegetación no controlada
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Envejecimiento'),
+                  onTap: () {
+                    // Lógica para la opción Envejecimiento
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Vandalismo'),
+                  onTap: () {
+                    // Lógica para la opción Vandalismo
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Otro'),
+                  onTap: () {
+                    // Lógica para la opción Otro
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ),
         );
       },
     );
   }
+
 
   Widget _rowsOptions() {
     return Padding(
