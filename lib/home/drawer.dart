@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pilasconelhueco/screens/DataScreen.dart';
 import 'package:pilasconelhueco/screens/otherApps.dart';
 import 'package:pilasconelhueco/screens/reports.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/Report.dart';
 import '../screens/contact.dart';
 import '../shared/styles.dart';
@@ -98,27 +99,44 @@ class _MyDrawerState extends State<MyDrawer> {
                         alignment: Alignment.center,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Image.asset(
-                              'assets/img/instagram.png',
-                              width: 60,
-                              height: 60,
+                          children: <Widget>[
+                            GestureDetector(
+                              onTap: () {
+                                // Redireccionar a Instagram
+                                launch('https://www.instagram.com/tu_usuario');
+                              },
+                              child: Image.asset(
+                                'assets/img/instagram.png',
+                                width: 60,
+                                height: 60,
+                              ),
                             ),
-                            Image.asset(
-                              'assets/img/facebook.png',
-                              width: 60,
-                              height: 60,
+                            GestureDetector(
+                              onTap: () {
+                                // Redireccionar a Facebook
+                                launch('https://www.facebook.com/mariajose.lopezavila.94');
+                              },
+                              child: Image.asset(
+                                'assets/img/facebook.png',
+                                width: 60,
+                                height: 60,
+                              ),
                             ),
-                            Image.asset(
-                              'assets/img/twitter.png',
-                              width: 60,
-                              height: 60,
+                            GestureDetector(
+                              onTap: () {
+                                // Redireccionar a Twitter
+                                launch('https://www.twitter.com/tu_usuario');
+                              },
+                              child: Image.asset(
+                                'assets/img/twitter.png',
+                                width: 60,
+                                height: 60,
+                              ),
                             ),
                           ],
+                        )
                         ),
                       ),
-                    ),
-
                   ],
                 ),
               ],
