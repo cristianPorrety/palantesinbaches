@@ -4,6 +4,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pilasconelhueco/repository/maprest.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
 
+import '../util/alerts.dart';
+
 class MapFragment extends StatefulWidget {
   late String Function() directionTyped;
   late Function(String) setAddress;
@@ -61,8 +63,14 @@ class _MapFragmentState extends State<MapFragment> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GestureDetector(
-                onTap: () => RestMapRepository.getCoordinates(
-                    directionTyped(), mapController, context),
+                onTap: () {
+                  if (directionTyped().isEmpty) {
+                    ToastManager.showToast(context, "El campo de dirección no puede estar vacío.");
+                  } else {
+                    RestMapRepository.getCoordinates(directionTyped(), mapController, context);
+                  }
+                },
+
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(10)),

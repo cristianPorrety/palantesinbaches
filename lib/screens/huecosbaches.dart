@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/models/ReportSaveModel.dart';
@@ -47,8 +48,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   List<File> filesSelected = [];
   ConfirmDataModel? datamodel;
   String selectedOption = "Selecciona una opción....";
-
-
+  var textInputFormatter = FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\sáéíóúÁÉÍÓÚüÜ]'));
   String getTextOfDirection() {
     print("hellooooooo");
     return _directionFieldController.text;
@@ -189,30 +189,42 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                                           datamodel = dataModelFirstScreen;
                                           index++;
                                         });
-                                      }  
+                                      }
                                     }
-                                    case 1 : {
-                                      if(_nameAndLastNameFieldController.text.isEmpty || _countrycodeFieldController.text.isEmpty || _cellphoneFieldController.text.isEmpty || _emailFieldController.text.isEmpty || filesSelected.isEmpty) {
-                                        ToastManager.showToast(context, "faltan agregar campos.");
-                                      } else {
-                                        setState(() {
-                                          ConfirmDataModel dataModelSecondScreen = ConfirmDataModel();
-                                          dataModelSecondScreen.address = datamodel!.address;
-                                          dataModelSecondScreen.observation = datamodel!.observation;
-                                          dataModelSecondScreen.name = _nameAndLastNameFieldController.text;
-                                          dataModelSecondScreen.cellphone = "+${_countrycodeFieldController.text} ${_cellphoneFieldController.text}";
-                                          dataModelSecondScreen.email = _emailFieldController.text;
-                                          dataModelSecondScreen.evidences = filesSelected;
-                                          dataModelSecondScreen.motive = selectedOption;
-                                          dataModelSecondScreen.reportDate = DateTime.now().toString();
-                                          datamodel = dataModelSecondScreen;
-                                          index++;
-                                        });
-                                      }  
-                                    }
-                                  case 2 : {
-                                    _Dialog_finalizar(context);
-                                  }
+                                    case 1:
+                                      {
+                                        if (_nameAndLastNameFieldController.text.isEmpty ||
+                                            _countrycodeFieldController.text.isEmpty ||
+                                            _cellphoneFieldController.text.isEmpty ||
+                                            _emailFieldController.text.isEmpty ||
+                                            filesSelected.isEmpty ||
+                                            _cellphoneFieldController.text.length != 10 ||
+                                            !_isValidEmail(_emailFieldController.text)) {
+                                          ToastManager.showToast(context, "Los datos ingresados no son correctos, o están vacíos");
+                                        } else {
+                                          setState(() {
+                                            ConfirmDataModel dataModelSecondScreen = ConfirmDataModel();
+                                            dataModelSecondScreen.address = datamodel!.address;
+                                            dataModelSecondScreen.observation = datamodel!.observation;
+                                            dataModelSecondScreen.name = _nameAndLastNameFieldController.text;
+                                            dataModelSecondScreen.cellphone = "+${_countrycodeFieldController.text} ${_cellphoneFieldController.text}";
+                                            dataModelSecondScreen.email = _emailFieldController.text;
+                                            dataModelSecondScreen.evidences = filesSelected;
+                                            dataModelSecondScreen.motive = selectedOption;
+                                            dataModelSecondScreen.reportDate = DateTime.now().toString();
+                                            datamodel = dataModelSecondScreen;
+                                            index++;
+                                          });
+                                        }
+                                      }
+                                    case 2:
+                                      {
+                                        if (filesSelected.isEmpty) {
+                                          ToastManager.showToast(context, "Debe agregar al menos un evidencia.");
+                                        } else {
+                                          _Dialog_finalizar(context);
+                                        }
+                                      }
                                   }
                                 },
 
@@ -310,7 +322,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          contentPadding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 60.0),
+          contentPadding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 50.0),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -341,7 +353,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                     Text(
                       "Número de reporte: RE${uniqueId.substring(uniqueId.length - 11)}",
                       style: TextStyle(
-                        fontSize: 16.0,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold
                       ),
                     ),
                   ],
@@ -350,20 +363,38 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
             ],
           ),
           actions: <Widget>[
-            TextButton(
+            ElevatedButton(
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => HomeScreen()),
                 );
               },
-              child: Text('Aceptar', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+              style: ElevatedButton.styleFrom(
+                primary: ColorsPalet.primaryColor,
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: Text(
+                  'Aceptar',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.white, // Color del texto
+                  ),
+                ),
+              ),
             ),
           ],
         );
       },
     );
   }
+
   Widget _directionBody() {
     return Column(
       children: [
@@ -771,6 +802,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         children: [
           TextField(
             controller: _nameAndLastNameFieldController,
+            inputFormatters: [textInputFormatter],
             decoration: InputDecoration(
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: ColorsPalet.primaryColor)),
@@ -806,6 +838,9 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
               padding: EdgeInsets.only(right: 10),
               child: TextField(
                 controller: _countrycodeFieldController,
+                onChanged: (_) {
+                  setState(() {});
+                },
                 maxLength: 2,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
@@ -823,13 +858,16 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
             child: Container(
               child: TextField(
                 controller: _cellphoneFieldController,
+                onChanged: (_) {
+                  setState(() {});
+                },
                 maxLength: 10,
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
                         borderSide:
                             BorderSide(color: ColorsPalet.primaryColor)),
-                    errorText: (isEmpty) ? 'Credenciales Incorrectas' : null,
+                    errorText: (_cellphoneFieldController.text.isNotEmpty && _cellphoneFieldController.text.length != 10) ? '' : null,
                     border: const OutlineInputBorder()),
                 cursorColor: ColorsPalet.primaryColor,
               ),
@@ -840,31 +878,52 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     );
   }
 
+
   Widget _EmailTextField() {
     return Container(
       margin: const EdgeInsets.only(bottom: 10, top: 10),
       decoration: BoxDecoration(
-          color: ColorsPalet.backgroundColor,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(color: Colors.black12, blurRadius: 0),
-          ]),
+        color: ColorsPalet.backgroundColor,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 0),
+        ],
+      ),
       child: Column(
         children: [
           TextField(
             controller: _emailFieldController,
+            onChanged: (_) {
+              setState(() {});
+            },
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: ColorsPalet.primaryColor)),
-                errorText: (isEmpty) ? 'Credenciales Incorrectas' : null,
-                border: const OutlineInputBorder()),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: ColorsPalet.primaryColor),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.red), // Borde rojo cuando hay error
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey), // Borde gris cuando no hay error
+              ),
+              errorText: (_emailFieldController.text.isNotEmpty && !_isValidEmail(_emailFieldController.text))
+                  ? 'Formato de correo no válido'
+                  : null, // Usamos null para no mostrar el mensaje de error cuando no hay error
+              border: const OutlineInputBorder(),
+            ),
             cursorColor: ColorsPalet.primaryColor,
           ),
         ],
       ),
     );
   }
+
+  bool _isValidEmail(String input) {
+    RegExp regex = RegExp(r'^[a-zA-Z0-9._%+-]+@gmail\.com$');
+    return regex.hasMatch(input);
+  }
+
 
   Widget _MotiveTextField() {
     return GestureDetector(
