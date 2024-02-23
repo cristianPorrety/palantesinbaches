@@ -1063,62 +1063,65 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Opciones',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: ColorsPalet.primaryColor)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text('Condiciones climáticas o inundaciones'),
-                onTap: () {
-                  Navigator.pop(
-                      context, 'Condiciones climáticas o inundaciones');
-                },
+              style: TextStyle(fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
+          content: SizedBox(
+            height: 400,
+            child: CupertinoScrollbar(
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  ListTile(
+                    title: Text('Condiciones climáticas o inundaciones'),
+                    onTap: () {
+                      Navigator.pop(
+                          context, 'Condiciones climáticas o inundaciones');
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Envejecimiento'),
+                    onTap: () {
+                      Navigator.pop(context, 'Envejecimiento');
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Falla en el diseño'),
+                    onTap: () {
+                      Navigator.pop(context, 'Falla en el diseño');
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Falla en el mantenimiento'),
+                    onTap: () {
+                      Navigator.pop(context, 'Falla en el mantenimiento');
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Tráfico pesado'),
+                    onTap: () {
+                      Navigator.pop(context, 'Tráfico pesado');
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Vandalismo'),
+                    onTap: () {
+                      Navigator.pop(context, 'Vandalismo');
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Vegetación no controlada'),
+                    onTap: () {
+                      Navigator.pop(context, 'Vegetación no controlada');
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Otro'),
+                    onTap: () {
+                      Navigator.pop(context, 'Otro');
+                    },
+                  ),
+                ],
               ),
-              ListTile(
-                title: Text('Envejecimiento'),
-                onTap: () {
-                  Navigator.pop(context, 'Envejecimiento');
-                },
-              ),
-              ListTile(
-                title: Text('Falla en el diseño'),
-                onTap: () {
-                  Navigator.pop(context, 'Falla en el diseño');
-                },
-              ),
-              ListTile(
-                title: Text('Falla en el mantenimiento'),
-                onTap: () {
-                  Navigator.pop(context, 'Falla en el mantenimiento');
-                },
-              ),
-              ListTile(
-                title: Text('Tráfico pesado'),
-                onTap: () {
-                  Navigator.pop(context, 'Tráfico pesado');
-                },
-              ),
-              ListTile(
-                title: Text('Vandalismo'),
-                onTap: () {
-                  Navigator.pop(context, 'Vandalismo');
-                },
-              ),
-              ListTile(
-                title: Text('Vegetación no controlada'),
-                onTap: () {
-                  Navigator.pop(context, 'Vegetación no controlada');
-                },
-              ),
-              ListTile(
-                title: Text('Otro'),
-                onTap: () {
-                  Navigator.pop(context, 'Otro');
-                },
-              ),
-            ],
+            ),
           ),
         );
       },
