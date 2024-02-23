@@ -59,12 +59,7 @@ class _DirectionBodyState extends State<DirectionBody> {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 20),
-          child: MapFragment(
-              directionTyped: getTextOfDirection,
-              setAddress: setDirectionInputState),
-        ),
+        
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(

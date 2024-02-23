@@ -9,16 +9,19 @@ import '../util/alerts.dart';
 class MapFragment extends StatefulWidget {
   late String Function() directionTyped;
   late Function(String) setAddress;
+  late Function(LatLng) setCooordinates;
 
   MapFragment(
-      {super.key, required this.directionTyped, required this.setAddress});
+      {super.key,
+      required this.directionTyped,
+      required this.setAddress,
+      required this.setCooordinates});
 
   @override
   // ignore: library_private_types_in_public_api
   _MapFragmentState createState() {
     // ignore: no_logic_in_create_state
-    return _MapFragmentState(
-        directionTyped: directionTyped);
+    return _MapFragmentState(directionTyped: directionTyped);
   }
 }
 
@@ -46,6 +49,8 @@ class _MapFragmentState extends State<MapFragment> {
           child: GoogleMap(
             onTap: (argument) {
               _addMarker(argument);
+              print(argument);
+              widget.setCooordinates(argument);
               setAddressByLatIng(argument);
               //RestMapRepository.getAddressFromLatLng(argument, setAddress);
             },
@@ -64,12 +69,13 @@ class _MapFragmentState extends State<MapFragment> {
               GestureDetector(
                 onTap: () {
                   if (directionTyped().isEmpty) {
-                    ToastManager.showToast(context, "El campo de dirección no puede estar vacío.");
+                    ToastManager.showToast(
+                        context, "El campo de dirección no puede estar vacío.");
                   } else {
-                    RestMapRepository.getCoordinates(directionTyped(), mapController, context);
+                    RestMapRepository.getCoordinates(
+                        directionTyped(), mapController, context);
                   }
                 },
-
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -115,6 +121,7 @@ class _MapFragmentState extends State<MapFragment> {
     List<Placemark> placemarks =
         await placemarkFromCoordinates(latLng.latitude, latLng.longitude);
     // Street, sublocality, subadministrative area, administrative area, country
-    widget.setAddress("${placemarks[0].street} ${placemarks[0].subLocality}, ${placemarks[0].subAdministrativeArea}, ${placemarks[0].administrativeArea}, ${placemarks[0].country}");
+    widget.setAddress(
+        "${placemarks[0].street} ${placemarks[0].subLocality}, ${placemarks[0].subAdministrativeArea}, ${placemarks[0].administrativeArea}, ${placemarks[0].country}");
   }
 }

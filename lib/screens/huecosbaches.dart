@@ -68,7 +68,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   void setLatLng(LatLng coordinates) {
     setState(() {
       print(coordinates);
-      coordinates = coordinates;
+      this.coordinates = coordinates;
     });
   }
 
@@ -404,7 +404,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                primary: ColorsPalet.primaryColor,
+                textStyle: TextStyle(color: ColorsPalet.primaryColor),
                 elevation: 3,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -455,6 +455,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         Padding(
           padding: const EdgeInsets.only(top: 10, bottom: 20),
           child: MapFragment(
+              setCooordinates: setLatLng,
               directionTyped: getTextOfDirection,
               setAddress: setDirectionInputState),
         ),
