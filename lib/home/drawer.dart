@@ -88,40 +88,47 @@ class _MyDrawerState extends State<MyDrawer> {
                     height: 140.0,
                   ),
                 ),
-                SizedBox(height: 20.0),
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5.0),
-                    alignment: Alignment.center,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Icon(
-                          Icons.facebook,
-                          size: 30,
-                          color: ColorsPalet.primaryColor,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget> [
+                    SizedBox(height: 20.0),
+                    Center(
+                      child: Container(
+                        padding: EdgeInsets.all(5.0),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Image.asset(
+                              'assets/img/instagram.png',
+                              width: 60,
+                              height: 60,
+                            ),
+                            Image.asset(
+                              'assets/img/facebook.png',
+                              width: 60,
+                              height: 60,
+                            ),
+                            Image.asset(
+                              'assets/img/twitter.png',
+                              width: 60,
+                              height: 60,
+                            ),
+                          ],
                         ),
-                        Icon(
-                          Icons.facebook,
-                          size: 30,
-                          color: ColorsPalet.primaryColor,
-                        ),
-                        Icon(
-                          Icons.facebook,
-                          size: 30,
-                          color: ColorsPalet.primaryColor,
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ]
+        )
       ),
     );
   }
+
 
 
 

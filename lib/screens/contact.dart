@@ -70,21 +70,34 @@ class Contacts extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget> [
-                Icon(
-                  Icons.facebook,
-                  size: 30,
-                  color: ColorsPalet.primaryColor,
+                SizedBox(height: 20.0),
+                Center(
+                  child: Container(
+                    padding: EdgeInsets.all(5.0),
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Image.asset(
+                          'assets/img/instagram.png',
+                          width: 60,
+                          height: 60,
+                        ),
+                        Image.asset(
+                          'assets/img/facebook.png',
+                          width: 60,
+                          height: 60,
+                        ),
+                        Image.asset(
+                          'assets/img/twitter.png',
+                          width: 60,
+                          height: 60,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                Icon(
-                  Icons.facebook,
-                  size: 30,
-                  color: ColorsPalet.primaryColor,
-                ),
-                Icon(
-                  Icons.facebook,
-                  size: 30,
-                  color: ColorsPalet.primaryColor,
-                ),
+
               ],
             ),
           ],
