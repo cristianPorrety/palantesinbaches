@@ -76,7 +76,7 @@ class Reports extends StatelessWidget {
                           title: Column(
                             children: [
                               Text("Información del reporte ${report.name} ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
-                              Divider(), // Línea divisoria debajo del título
+                              Divider(),
                               Text("En proceso",style: TextStyle(fontSize: 14,)),
                             ],
                           ),
