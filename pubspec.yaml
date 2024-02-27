@@ -43,6 +43,7 @@ dependencies:
   flutter_social_button: ^1.1.4+1
   uuid: ^4.3.3
   url_launcher: ^6.2.5
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
