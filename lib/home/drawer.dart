@@ -115,7 +115,7 @@ class _MyDrawerState extends State<MyDrawer> {
                                   GestureDetector(
                                     onTap: () {
                                       // Redireccionar a Facebook
-                                      launch('https://www.pressreader.com/@santamartadtch');
+                                      launch('https://www.facebook.com/SantaMartaDTCH?mibextid=ZbWKwL');
                                     },
                                     child: Image.asset(
                                       'assets/img/facebook.png',

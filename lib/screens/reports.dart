@@ -51,19 +51,15 @@ class Reports extends StatelessWidget {
           rows: reports.map((report) => DataRow(
             cells: [
               DataCell(
-                Flexible(
-                  child: Text(
-                    report.name,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                Text(
+                  report.name,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               DataCell(
-                Flexible(
-                  child: Text(
-                    report!.dateTime,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                Text(
+                  report!.dateTime,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               DataCell(
@@ -75,7 +71,8 @@ class Reports extends StatelessWidget {
                         return AlertDialog(
                           title: Column(
                             children: [
-                              Text("Información del reporte ${report.name} ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
+                              
+                              Text("Reporte número: ${report.name} ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
                               Divider(),
                               Text("En proceso",style: TextStyle(fontSize: 14,)),
                             ],
@@ -127,11 +124,9 @@ class Reports extends StatelessWidget {
                 ),
               ),
               DataCell(
-                Flexible(
-                  child: Text(
-                    report!.estado,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                Text(
+                  report!.estado,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
