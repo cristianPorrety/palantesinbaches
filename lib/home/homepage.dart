@@ -140,80 +140,88 @@ class MenuFragment extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(40)),
           color: ColorsPalet.backgroundColor
         ),
-        child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Text(MainPageText.title, style: const TextStyle(fontWeight: FontWeight.w700),),
-          Row(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
+            child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => ReportPotholesScreen()),
-                    );
-                  },
-                child: menuItem(ImagesPath.carreteraImg, MainPageText.hoolTitle, MainPageText.hoolDesc)
+              Padding(
+                padding: const EdgeInsets.only(top: 10, bottom: 30),
+                child: Text(MainPageText.title, style: const TextStyle(fontWeight: FontWeight.w700),),
               ),
-              GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => DataScreen()),
-                    );
-                  },
-                  
-                child: menuItem(ImagesPath.mydataImg, MainPageText.myDataTitle, MainPageText.myDataDesc)
-              )
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => Reports(reports: reports)),
-                  );
-                },
-                child: menuItem(ImagesPath.reportsImg, MainPageText.myReportsTitle, MainPageText.myReportsDesc),
-              ), GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => Contacts()),
-                  );
-                },
-                child: menuItem(ImagesPath.atentionlineImg, MainPageText.atentionLineTitle, MainPageText.atentionLineDesc),
-              ),
-            ],
-          ),
-                  
-          GestureDetector(
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => OtherAppsPage()),
-              );
-            },
-            child: menuItem(ImagesPath.anotherAppImg, MainPageText.otherAppsTitle, MainPageText.otherAppsDesc),
-          ),
-          Column(
-            children: [
-              Text(
-                AlcaldiaSantaMartaText.mainText,
-                style: TextStyle(color: ColorsPalet.primaryColor, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                AlcaldiaSantaMartaText.secondText,
-                style: TextStyle(color: ColorsPalet.primaryColor, fontSize: 11.1),
-              ),
-            ],
-          ),
-        ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => ReportPotholesScreen()),
+                        );
+                      },
+                    child: menuItem(ImagesPath.carreteraImg, MainPageText.hoolTitle, MainPageText.hoolDesc)
                   ),
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => DataScreen()),
+                        );
+                      },
+                      
+                    child: menuItem(ImagesPath.mydataImg, MainPageText.myDataTitle, MainPageText.myDataDesc)
+                  )
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => Reports(reports: reports)),
+                      );
+                    },
+                    child: menuItem(ImagesPath.reportsImg, MainPageText.myReportsTitle, MainPageText.myReportsDesc),
+                  ), GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => Contacts()),
+                      );
+                    },
+                    child: menuItem(ImagesPath.atentionlineImg, MainPageText.atentionLineTitle, MainPageText.atentionLineDesc),
+                  ),
+                ],
+              ),
+                      
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => OtherAppsPage()),
+                  );
+                },
+                child: menuItem(ImagesPath.anotherAppImg, MainPageText.otherAppsTitle, MainPageText.otherAppsDesc),
+              ),
+              Column(
+                children: [
+                  Text(
+                    AlcaldiaSantaMartaText.mainText,
+                    style: TextStyle(color: ColorsPalet.primaryColor, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    AlcaldiaSantaMartaText.secondText,
+                    style: TextStyle(color: ColorsPalet.primaryColor, fontSize: 11.1),
+                  ),
+                ],
+              ),
+            ],
+                      ),
+          ),
+        ),
       ),
     );
   }

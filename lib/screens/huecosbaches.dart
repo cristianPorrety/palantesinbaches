@@ -1,26 +1,21 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/models/ReportSaveModel.dart';
 import 'package:pilasconelhueco/repository/maprest.dart';
 import 'package:pilasconelhueco/screens/huecosbaches/camerautils.dart';
-import 'package:pilasconelhueco/screens/huecosbaches/huecosbachesscreen.dart';
 import 'package:pilasconelhueco/screens/mapwidget.dart';
 import 'package:pilasconelhueco/shared/labels.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
-import 'package:pilasconelhueco/sharedfragments/headerfragment.dart';
 import 'package:pilasconelhueco/util/alerts.dart';
-import 'package:pilasconelhueco/util/inheritedwiidget.dart';
 import 'package:uuid/uuid.dart';
-
-import '../models/Report.dart';
 
 class ReportPotholesScreen extends StatefulWidget {
   const ReportPotholesScreen({super.key});
@@ -33,6 +28,10 @@ class ReportPotholesScreen extends StatefulWidget {
 }
 
 class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
+  static const double defaultZoom = 13.0;
+  Set<Marker> markers = {};
+  static const LatLng staMarta = LatLng(11.239912, -74.194023);
+  late GoogleMapController mapController;
   final TextEditingController _directionFieldController =
       TextEditingController();
   final TextEditingController _obsercationFieldController =
@@ -53,6 +52,11 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   String selectedOption = "Selecciona una opción....";
   var textInputFormatter =
       FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\sáéíóúÁÉÍÓÚüÜ]'));
+  
+   void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+  
   String getTextOfDirection() {
     print("hellooooooo");
     return _directionFieldController.text;
@@ -100,7 +104,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   void initState() {
     super.initState();
     // Initialize the variable in the initState method
-    widgets = [_directionBody, _moreData, _confirmData];
+    widgets = [_mapWithDirectionBody, _moreData, _confirmData];
   }
 
   // Street, sublocality, subadministrative area, administrative area, country
@@ -109,16 +113,16 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80.0),
+        preferredSize: Size.fromHeight(60.0),
         child: AppBar(
           backgroundColor: ColorsPalet.primaryColor,
           elevation: 1,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30),
-            ),
-          ),
+          // shape: const RoundedRectangleBorder(
+          //   borderRadius: BorderRadius.only(
+          //     bottomLeft: Radius.circular(30),
+          //     bottomRight: Radius.circular(30),
+          //   ),
+          // ),
           leading: IconButton(
             icon: Icon(Icons.arrow_back, size: 30, color: Colors.white),
             onPressed: () {
@@ -137,7 +141,9 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
           ),
         ),
       ),
-      body: Column(
+      body: (index == 0) 
+      ?  _mapWithDirectionBody() 
+      : Column(
         children: [
           Expanded(
             flex: 8,
@@ -177,113 +183,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              GestureDetector(
-                                onTap: () {
-                                  switch (index) {
-                                    case 0:
-                                      {
-                                        if (_directionFieldController
-                                                .text.isEmpty ||
-                                            _obsercationFieldController
-                                                .text.isEmpty) {
-                                          ToastManager.showToast(context,
-                                              "faltan agregar campos.");
-                                        } else if (coordinates == null) {
-                                          ToastManager.showToast(context,
-                                              "no se ha seleccionado un sitio en especifico.");
-                                        } else {
-                                          setState(() {
-                                            ConfirmDataModel
-                                                dataModelFirstScreen =
-                                                ConfirmDataModel();
-                                            dataModelFirstScreen.address =
-                                                _directionFieldController.text;
-                                            dataModelFirstScreen.observation =
-                                                _obsercationFieldController
-                                                    .text;
-                                            dataModelFirstScreen.latLng =
-                                                coordinates;
-                                            datamodel = dataModelFirstScreen;
-                                            index++;
-                                          });
-                                        }
-                                      }
-                                    case 1:
-                                      {
-                                        if (_nameAndLastNameFieldController
-                                                .text.isEmpty ||
-                                            _countrycodeFieldController
-                                                .text.isEmpty ||
-                                            _cellphoneFieldController
-                                                .text.isEmpty ||
-                                            _emailFieldController
-                                                .text.isEmpty ||
-                                            filesSelected.isEmpty ||
-                                            _cellphoneFieldController
-                                                    .text.length !=
-                                                10 ||
-                                            !_isValidEmail(
-                                                _emailFieldController.text)) {
-                                          ToastManager.showToast(context,
-                                              "Los datos ingresados no son correctos, o están incompletos");
-                                        } else {
-                                          setState(() {
-                                            ConfirmDataModel
-                                                dataModelSecondScreen =
-                                                ConfirmDataModel();
-                                            dataModelSecondScreen.address =
-                                                datamodel!.address;
-                                            dataModelSecondScreen.observation =
-                                                datamodel!.observation;
-                                            dataModelSecondScreen.name =
-                                                _nameAndLastNameFieldController
-                                                    .text;
-                                            dataModelSecondScreen.cellphone =
-                                                "+${_countrycodeFieldController.text} ${_cellphoneFieldController.text}";
-                                            dataModelSecondScreen.email =
-                                                _emailFieldController.text;
-                                            dataModelSecondScreen.evidences =
-                                                filesSelected;
-                                            dataModelSecondScreen.motive =
-                                                selectedOption;
-                                            dataModelSecondScreen.reportDate =
-                                                DateTime.now().toString();
-                                            datamodel = dataModelSecondScreen;
-                                            index++;
-                                          });
-                                        }
-                                      }
-                                    case 2:
-                                      {
-                                        if (filesSelected.isEmpty) {
-                                          ToastManager.showToast(context,
-                                              "Debe agregar al menos un evidencia.");
-                                        } else {
-                                          _Dialog_finalizar(context);
-                                        }
-                                      }
-                                  }
-                                },
-                                child: Container(
-                                  width: 140,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                      color: ColorsPalet.primaryColor,
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Center(
-                                      child: GestureDetector(
-                                    child: Text(
-                                      (index < widgets.length - 1)
-                                          ? "continuar"
-                                          : "finalizar",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          color: ColorsPalet.backgroundColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  )),
-                                ),
-                              ),
+                              _ButtonForm(),
                               SizedBox(
                                 height: 12,
                                 child: Padding(
@@ -347,6 +247,90 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
             ]),
           ),
         ],
+      ),
+      );
+  }
+
+  Widget _ButtonForm() {
+    return GestureDetector(
+      onTap: () {
+        switch (index) {
+          case 0:
+            {
+              if (_directionFieldController.text.isEmpty ||
+                  _obsercationFieldController.text.isEmpty) {
+                ToastManager.showToast(context, "faltan agregar campos.");
+              } else if (coordinates == null) {
+                ToastManager.showToast(
+                    context, "no se ha seleccionado un sitio en especifico.");
+              } else {
+                setState(() {
+                  ConfirmDataModel dataModelFirstScreen = ConfirmDataModel();
+                  dataModelFirstScreen.address = _directionFieldController.text;
+                  dataModelFirstScreen.observation =
+                      _obsercationFieldController.text;
+                  dataModelFirstScreen.latLng = coordinates;
+                  datamodel = dataModelFirstScreen;
+                  index++;
+                });
+              }
+            }
+          case 1:
+            {
+              if (_nameAndLastNameFieldController.text.isEmpty ||
+                  _countrycodeFieldController.text.isEmpty ||
+                  _cellphoneFieldController.text.isEmpty ||
+                  _emailFieldController.text.isEmpty ||
+                  filesSelected.isEmpty ||
+                  _cellphoneFieldController.text.length != 10 ||
+                  !_isValidEmail(_emailFieldController.text)) {
+                ToastManager.showToast(context,
+                    "Los datos ingresados no son correctos, o están incompletos");
+              } else {
+                setState(() {
+                  ConfirmDataModel dataModelSecondScreen = ConfirmDataModel();
+                  dataModelSecondScreen.address = datamodel!.address;
+                  dataModelSecondScreen.observation = datamodel!.observation;
+                  dataModelSecondScreen.name =
+                      _nameAndLastNameFieldController.text;
+                  dataModelSecondScreen.cellphone =
+                      "+${_countrycodeFieldController.text} ${_cellphoneFieldController.text}";
+                  dataModelSecondScreen.email = _emailFieldController.text;
+                  dataModelSecondScreen.evidences = filesSelected;
+                  dataModelSecondScreen.motive = selectedOption;
+                  dataModelSecondScreen.reportDate = DateTime.now().toString();
+                  datamodel = dataModelSecondScreen;
+                  index++;
+                });
+              }
+            }
+          case 2:
+            {
+              if (filesSelected.isEmpty) {
+                ToastManager.showToast(
+                    context, "Debe agregar al menos un evidencia.");
+              } else {
+                _Dialog_finalizar(context);
+              }
+            }
+        }
+      },
+      child: Container(
+        width: 140,
+        height: 50,
+        decoration: BoxDecoration(
+            color: ColorsPalet.primaryColor,
+            borderRadius: BorderRadius.circular(10)),
+        child: Center(
+            child: GestureDetector(
+          child: Text(
+            (index < widgets.length - 1) ? "continuar" : "finalizar",
+            style: TextStyle(
+                fontSize: 25,
+                color: ColorsPalet.backgroundColor,
+                fontWeight: FontWeight.bold),
+          ),
+        )),
       ),
     );
   }
@@ -435,53 +419,146 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     );
   }
 
-  Widget _directionBody() {
-    return Column(
+
+  void _addMarker(LatLng latLng) {
+    setState(() {
+      markers.clear();
+      print("mapaaaa");
+      markers.add(Marker(
+        markerId: MarkerId('selected-location'),
+        position: latLng,
+        infoWindow: InfoWindow(
+          title: 'Selected Location',
+          snippet: 'Lat: ${latLng.latitude}, Lng: ${latLng.longitude}',
+        ),
+      ));
+    });
+  }
+
+  Future<void> setAddressByLatIng(LatLng latLng) async {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(latLng.latitude, latLng.longitude);
+    // Street, sublocality, subadministrative area, administrative area, country
+    setDirectionInputState(
+        "${placemarks[0].street} ${placemarks[0].subLocality}, ${placemarks[0].subAdministrativeArea}, ${placemarks[0].administrativeArea}, ${placemarks[0].country}");
+  }
+
+
+  Widget MapFragment() {
+    return Container(
+      decoration:
+          BoxDecoration(border: Border.all(color: ColorsPalet.itemColor)),
+      child: GoogleMap(
+        onTap: (argument) {
+          _addMarker(argument);
+          print(argument);
+          setLatLng(argument);
+          setAddressByLatIng(argument);
+          //RestMapRepository.getAddressFromLatLng(argument, setAddress);
+        },
+        onMapCreated: _onMapCreated,
+        markers: markers,
+        mapType: MapType.normal,
+        initialCameraPosition:
+            const CameraPosition(target: staMarta, zoom: defaultZoom),
+      ),
+    );
+  }
+
+  Widget _mapWithDirectionBody() {
+    return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
+        MapFragment(),
+        DraggableScrollableSheet(
+          initialChildSize: 0.5, // Tamaño inicial del sheet
+          minChildSize: 0.5, // Tamaño mínimo al hacer swipe hacia abajo
+          maxChildSize: 0.8, // Tamaño máximo al hacer swipe hacia arriba
+          builder: (context, scrollController) {
+            return bottomModalSheet();
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget bottomModalSheet() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        color: Colors.white,
+      ),
+      padding: EdgeInsets.all(16.0),
+      child: ListView(
+        physics: const ClampingScrollPhysics(),
+        children: <Widget>[
+          Column(
             children: [
               Container(
                   width: double.infinity,
                   margin: EdgeInsets.only(bottom: 5),
                   child: Text(PotholesScreenText.titleForm,
                       style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 20))),
+                          fontWeight: FontWeight.bold, fontSize: 16))),
               SizedBox(
                   width: double.infinity,
                   child: Text(
                     PotholesScreenText.directionField,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                   )),
               _DirectionTextField(),
             ],
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 20),
-          child: MapFragment(
-              setCooordinates: setLatLng,
-              directionTyped: getTextOfDirection,
-              setAddress: setDirectionInputState),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
+          Row(
             children: [
-              Container(
-                  width: double.infinity,
-                  child: Text(
-                    PotholesScreenText.observationField,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                  )),
-              _TextAreaField(),
+              GestureDetector(
+                    onTap: () {
+                      if (_directionFieldController.text.isEmpty) {
+                        ToastManager.showToast(
+                            context, "El campo de dirección no puede estar vacío.");
+                      } else {
+                        RestMapRepository.getCoordinates(
+                            _directionFieldController.text, mapController, context);
+                      }
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(Radius.circular(10)),
+                          color: ColorsPalet.backgroundColor,
+                          border: Border.all(color: ColorsPalet.primaryColor)),
+                      height: 40,
+                      width: 140,
+                      child: Center(
+                          child: Text(
+                        "Buscar",
+                        style: TextStyle(
+                            color: ColorsPalet.primaryColor,
+                            fontWeight: FontWeight.bold),
+                      )),
+                    ),
+                  ),
+              const SizedBox()
             ],
           ),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Column(
+              children: [
+                Container(
+                    width: double.infinity,
+                    child: Text(
+                      PotholesScreenText.observationField,
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    )),
+                _TextAreaField(),
+              ],
+            ),
+          ),
+          _ButtonForm()
+        ],
+      ),
     );
   }
+
 
   Widget _moreData() {
     return Padding(
@@ -746,7 +823,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       child: Column(
         children: [
           TextField(
-            maxLines: 3,
+            maxLines: 2,
             controller: _obsercationFieldController,
             decoration: InputDecoration(
                 focusedBorder: OutlineInputBorder(
@@ -1063,7 +1140,9 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Opciones',
-              style: TextStyle(fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: ColorsPalet.primaryColor)),
           content: SizedBox(
             height: 400,
             child: CupertinoScrollbar(
@@ -1176,6 +1255,4 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       ),
     );
   }
-
-
 }

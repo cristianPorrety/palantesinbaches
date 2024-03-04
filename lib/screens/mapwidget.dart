@@ -40,65 +40,23 @@ class _MapFragmentState extends State<MapFragment> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          decoration:
-              BoxDecoration(border: Border.all(color: ColorsPalet.itemColor)),
-          height: 300,
-          child: GoogleMap(
-            onTap: (argument) {
-              _addMarker(argument);
-              print(argument);
-              widget.setCooordinates(argument);
-              setAddressByLatIng(argument);
-              //RestMapRepository.getAddressFromLatLng(argument, setAddress);
-            },
-            onMapCreated: _onMapCreated,
-            markers: markers,
-            mapType: MapType.normal,
-            initialCameraPosition:
-                const CameraPosition(target: staMarta, zoom: defaultZoom),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 10, top: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  if (directionTyped().isEmpty) {
-                    ToastManager.showToast(
-                        context, "El campo de dirección no puede estar vacío.");
-                  } else {
-                    RestMapRepository.getCoordinates(
-                        directionTyped(), mapController, context);
-                  }
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      color: ColorsPalet.backgroundColor,
-                      border: Border.all(color: ColorsPalet.primaryColor)),
-                  height: 40,
-                  width: 140,
-                  child: Center(
-                      child: Text(
-                    "Buscar",
-                    style: TextStyle(
-                        color: ColorsPalet.primaryColor,
-                        fontWeight: FontWeight.bold),
-                  )),
-                ),
-              ),
-              const SizedBox(
-                width: 2,
-              )
-            ],
-          ),
-        ),
-      ],
+    return Container(
+      decoration:
+          BoxDecoration(border: Border.all(color: ColorsPalet.itemColor)),
+      child: GoogleMap(
+        onTap: (argument) {
+          _addMarker(argument);
+          print(argument);
+          widget.setCooordinates(argument);
+          setAddressByLatIng(argument);
+          //RestMapRepository.getAddressFromLatLng(argument, setAddress);
+        },
+        onMapCreated: _onMapCreated,
+        markers: markers,
+        mapType: MapType.normal,
+        initialCameraPosition:
+            const CameraPosition(target: staMarta, zoom: defaultZoom),
+      ),
     );
   }
 
@@ -125,3 +83,65 @@ class _MapFragmentState extends State<MapFragment> {
         "${placemarks[0].street} ${placemarks[0].subLocality}, ${placemarks[0].subAdministrativeArea}, ${placemarks[0].administrativeArea}, ${placemarks[0].country}");
   }
 }
+
+
+
+    // return Column(
+    //   children: [
+    //     Container(
+    //       decoration:
+    //           BoxDecoration(border: Border.all(color: ColorsPalet.itemColor)),
+    //       height: 300,
+    //       child: GoogleMap(
+    //         onTap: (argument) {
+    //           _addMarker(argument);
+    //           print(argument);
+    //           widget.setCooordinates(argument);
+    //           setAddressByLatIng(argument);
+    //           //RestMapRepository.getAddressFromLatLng(argument, setAddress);
+    //         },
+    //         onMapCreated: _onMapCreated,
+    //         markers: markers,
+    //         mapType: MapType.normal,
+    //         initialCameraPosition:
+    //             const CameraPosition(target: staMarta, zoom: defaultZoom),
+    //       ),
+    //     ),
+    //     Padding(
+    //       padding: const EdgeInsets.only(left: 10, top: 10),
+    //       child: Row(
+    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //         children: [
+    //           GestureDetector(
+    //             onTap: () {
+    //               if (directionTyped().isEmpty) {
+    //                 ToastManager.showToast(
+    //                     context, "El campo de dirección no puede estar vacío.");
+    //               } else {
+    //                 RestMapRepository.getCoordinates(
+    //                     directionTyped(), mapController, context);
+    //               }
+    //             },
+    //             child: Container(
+    //               decoration: BoxDecoration(
+    //                   borderRadius: const BorderRadius.all(Radius.circular(10)),
+    //                   color: ColorsPalet.backgroundColor,
+    //                   border: Border.all(color: ColorsPalet.primaryColor)),
+    //               height: 40,
+    //               width: 140,
+    //               child: Center(
+    //                   child: Text(
+    //                 "Buscar",
+    //                 style: TextStyle(
+    //                     color: ColorsPalet.primaryColor,
+    //                     fontWeight: FontWeight.bold),
+    //               )),
+    //             ),
+    //           ),
+    //           const SizedBox(
+    //             width: 2,
+    //           )
+    //         ],
+    //       ),
+    //     ),
+    //   ],

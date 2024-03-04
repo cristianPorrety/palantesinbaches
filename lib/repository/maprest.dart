@@ -30,7 +30,7 @@ class RestMapRepository {
 
         return latLng;
       } else {
-        ToastManager.showToast(context, "Las coordenadas proporcionadas no pudieron ser obtenidas.");
+        ToastManager.showToast(context, "La dirección escrita no fue encontrada.");
         return LatLng(0, 0);
       }
     } else {
