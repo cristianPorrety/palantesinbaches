@@ -1095,7 +1095,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   }
 
   bool _isValidEmail(String input) {
-    RegExp regex = RegExp(r'^[a-zA-Z0-9._%+-]+@gmail\.com$');
+    RegExp regex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
     return regex.hasMatch(input);
   }
 
