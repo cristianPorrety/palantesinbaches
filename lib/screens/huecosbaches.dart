@@ -889,7 +889,10 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
           child: ListView(
             physics: const BouncingScrollPhysics(),
             children: [
-              GestureDetector(
+              //Evidencia video
+           /*
+
+            GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
                   CameraUtils.recordVideo(context, addFile, filesSelected);
@@ -921,7 +924,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                     ),
                   ),
                 ),
-              ),
+              ),*/
               GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
