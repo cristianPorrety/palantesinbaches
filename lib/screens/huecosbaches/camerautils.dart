@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
 class CameraUtils {
-  static int _maxPhotos = 5;
+  static int _maxPhotos = 2;
   static int _maxVideos = 1;
   static final picker = ImagePicker();
 
