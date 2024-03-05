@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:pilasconelhueco/shared/keys.dart';
@@ -56,6 +57,18 @@ class RestMapRepository {
     }
   }
 
+  static Future<LatLng?> getCurrentLocation() async {
+    try {
+      // Obtener la posición actual del dispositivo
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
 
-
+      // Crear LatLng object
+      LatLng latLng = LatLng(position.latitude, position.longitude);
+      return latLng;
+    } catch (e) {
+      print('Error obteniendo la ubicación: $e');
+      return null;
+    }
+  }
 }

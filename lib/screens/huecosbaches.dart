@@ -104,9 +104,23 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   void initState() {
     super.initState();
     // Initialize the variable in the initState method
+    _getCurrentLocationAndMark();
     widgets = [_mapWithDirectionBody, _moreData, _confirmData];
   }
-
+  void _getCurrentLocationAndMark() async {
+    LatLng? currentLocation = await RestMapRepository.getCurrentLocation();
+    if (currentLocation != null) {
+      _addMarker(currentLocation);
+      mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: currentLocation,
+            zoom: 15,
+          ),
+        ),
+      );
+    }
+  }
   // Street, sublocality, subadministrative area, administrative area, country
 
   @override

@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       ),
 
       //home: ReportPotholesScreen(),
-     home:SplashScreen(),
+     home:OnboardingScreen(),
 
     );
   }
