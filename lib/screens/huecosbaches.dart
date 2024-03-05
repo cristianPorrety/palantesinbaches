@@ -52,11 +52,11 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   String selectedOption = "Selecciona una opción....";
   var textInputFormatter =
       FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\sáéíóúÁÉÍÓÚüÜ]'));
-  
+
    void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
-  
+
   String getTextOfDirection() {
     print("hellooooooo");
     return _directionFieldController.text;
@@ -141,8 +141,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
           ),
         ),
       ),
-      body: (index == 0) 
-      ?  _mapWithDirectionBody() 
+      body: (index == 0)
+      ?  _mapWithDirectionBody()
       : Column(
         children: [
           Expanded(
@@ -285,8 +285,10 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                   _cellphoneFieldController.text.length != 10 ||
                   !_isValidEmail(_emailFieldController.text)) {
                 ToastManager.showToast(context,
-                    "Los datos ingresados no son correctos, o están incompletos");
-              } else {
+                    "Los datos ingresados no son correctos, o están incompletos");}
+              else if (selectedOption == "Selecciona una opción....") {
+                ToastManager.showToast(context, "Por favor seleccione una motivo de daño. ");}
+              else {
                 setState(() {
                   ConfirmDataModel dataModelSecondScreen = ConfirmDataModel();
                   dataModelSecondScreen.address = datamodel!.address;
@@ -1109,7 +1111,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     return GestureDetector(
       onTap: () async {
         final selected = await getModalScreen();
-        if (selected != null) {
+        if (selected != null ) {
           setState(() {
             selectedOption = selected;
           });
@@ -1150,6 +1152,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                   fontWeight: FontWeight.bold,
                   color: ColorsPalet.primaryColor)),
           content: SizedBox(
+            width: 300,
             height: 400,
             child: CupertinoScrollbar(
               child: ListView(
