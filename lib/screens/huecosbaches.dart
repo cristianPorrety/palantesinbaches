@@ -505,12 +505,14 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                     PotholesScreenText.directionField,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                   )),
-              _DirectionTextField(),
-            ],
-          ),
-          Row(
-            children: [
-              GestureDetector(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: _DirectionTextField(),
+                  ),
+                  SizedBox(width: 2,),
+                  GestureDetector(
                     onTap: () {
                       if (_directionFieldController.text.isEmpty) {
                         ToastManager.showToast(
@@ -521,22 +523,24 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                       }
                     },
                     child: Container(
+                      margin: EdgeInsets.only(bottom: 15),
                       decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(10)),
                           color: ColorsPalet.backgroundColor,
                           border: Border.all(color: ColorsPalet.primaryColor)),
-                      height: 40,
-                      width: 140,
+                      height: 66,
+                      width: 60,
                       child: Center(
-                          child: Text(
-                        "Buscar",
-                        style: TextStyle(
-                            color: ColorsPalet.primaryColor,
-                            fontWeight: FontWeight.bold),
-                      )),
+                        child: Icon(
+                          Icons.search,
+                          color: ColorsPalet.primaryColor,
+                          size: 33,
+                        ),
+                      ),
                     ),
                   ),
-              const SizedBox()
+                ],
+              ),
             ],
           ),
           Padding(
@@ -558,7 +562,6 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       ),
     );
   }
-
 
   Widget _moreData() {
     return Padding(
@@ -1098,7 +1101,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   }
 
   bool _isValidEmail(String input) {
-    RegExp regex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    RegExp regex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
     return regex.hasMatch(input);
   }
 
