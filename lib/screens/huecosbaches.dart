@@ -39,7 +39,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   final TextEditingController _nameAndLastNameFieldController =
       TextEditingController();
   final TextEditingController _countrycodeFieldController =
-      TextEditingController();
+      TextEditingController(text:'57');
   final TextEditingController _cellphoneFieldController =
       TextEditingController();
   final TextEditingController _emailFieldController = TextEditingController();

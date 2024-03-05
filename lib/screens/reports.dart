@@ -71,7 +71,6 @@ class Reports extends StatelessWidget {
                         return AlertDialog(
                           title: Column(
                             children: [
-                              
                               Text("Reporte número: ${report.name} ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
                               Divider(),
                               Text("En proceso",style: TextStyle(fontSize: 14,)),
