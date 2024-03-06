@@ -148,12 +148,12 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   }
 
   void _showPermissionDeniedToast(BuildContext context) {
-    ToastManager2.showPersistentToast(context, "Se rechazó el permiso para acceder a la ubicación. Acepta los permisos necesarios en la configuración de la aplicación."
+    ToastManager2.showPersistentToast(context, "Se rechazó el permiso para acceder a la ubicación. Por favor, acepte los permisos necesarios de la aplicación."
     );
   }
 
   void _showPermanentDeniedToast(BuildContext context) {
-    ToastManager2.showPersistentToast(context, "Se rechazó el permiso para acceder a la ubicación. Acepta los permisos necesarios en la configuración de la aplicación."
+    ToastManager2.showPersistentToast(context, "Se rechazó el permiso para acceder a la ubicación. Por favor, acepte los permisos necesarios de la aplicación."
     );
   }
 
