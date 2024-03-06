@@ -2,6 +2,10 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import '../screens/huecosbaches.dart';
 
 class ToastManager {
 
@@ -14,4 +18,30 @@ class ToastManager {
     ));
   }
 
+}
+
+class ToastManager2 {
+  static void showPersistentToast(BuildContext context, String message) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 10000000),
+        action: SnackBarAction(
+          label: 'Configuración',
+          onPressed: () async {
+            // Abre la configuración de la aplicación en el dispositivo
+            await openAppSettings();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ReportPotholesScreen(),
+              ),
+            );
+          },
+        ),
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(bottom: 1),
+      ),
+    );
+  }
 }

@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/models/ReportSaveModel.dart';
 import 'package:pilasconelhueco/repository/maprest.dart';
@@ -28,6 +29,8 @@ class ReportPotholesScreen extends StatefulWidget {
 }
 
 class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
+  late OverlayEntry _overlayEntry;
+  bool _permissionDenied = false;
   static const double defaultZoom = 13.0;
   Set<Marker> markers = {};
   static const LatLng staMarta = LatLng(11.239912, -74.194023);
@@ -52,6 +55,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   String selectedOption = "Selecciona una opción....";
   var textInputFormatter =
       FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\sáéíóúÁÉÍÓÚüÜ]'));
+
 
    void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -104,7 +108,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   void initState() {
     super.initState();
     // Initialize the variable in the initState method
-    _getCurrentLocationAndMark();
+    _requestLocationPermission();
+  //  _getCurrentLocationAndMark();
     widgets = [_mapWithDirectionBody, _moreData, _confirmData];
   }
   void _getCurrentLocationAndMark() async {
@@ -122,7 +127,44 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     }
   }
   // Street, sublocality, subadministrative area, administrative area, country
+  Future<void> _requestLocationPermission() async {
+    final PermissionStatus status = await Permission.location.request();
+    if (status == PermissionStatus.granted) {
+      print('Permiso de ubicación concedido.');
+      _getCurrentLocationAndMark(); // Call this method when permission is granted
+    } else if (status == PermissionStatus.denied) {
+      print('Permiso de ubicación denegado.');
+      setState(() {
+        _permissionDenied = true;
+      });
+      _showPermissionDeniedToast(context);
+    } else {
+      print('Permiso de ubicación denegado permanentemente.');
+      setState(() {
+        _permissionDenied = true;
+      });
+      _showPermanentDeniedToast(context);
+    }
+  }
 
+  void _showPermissionDeniedToast(BuildContext context) {
+    ToastManager2.showPersistentToast(context, "Se rechazó el permiso para acceder a la ubicación. Acepta los permisos necesarios en la configuración de la aplicación."
+    );
+  }
+
+  void _showPermanentDeniedToast(BuildContext context) {
+    ToastManager2.showPersistentToast(context, "Se rechazó el permiso para acceder a la ubicación. Acepta los permisos necesarios en la configuración de la aplicación."
+    );
+  }
+
+
+
+
+  @override
+  void dispose() {
+    _overlayEntry.remove();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
