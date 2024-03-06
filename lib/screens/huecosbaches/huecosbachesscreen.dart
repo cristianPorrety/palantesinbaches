@@ -604,7 +604,7 @@ class _MoreDataScreenState extends State<MoreDataScreen> {
           ),
           GestureDetector(
             onTap: () {
-              CameraUtils.getMedia(addMultipleFiles, selectedFiles);
+              CameraUtils.getMedia(addMultipleFiles, selectedFiles,context);
             },
             child: Container(
               decoration: BoxDecoration(

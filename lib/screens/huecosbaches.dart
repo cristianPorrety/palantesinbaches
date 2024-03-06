@@ -1300,7 +1300,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
           ),
           GestureDetector(
             onTap: () {
-              CameraUtils.getMedia(addMultipleFiles, filesSelected);
+              CameraUtils.getMedia(addMultipleFiles, filesSelected, context);
             },
             child: Container(
               decoration: BoxDecoration(

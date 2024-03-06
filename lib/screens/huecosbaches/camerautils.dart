@@ -6,13 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../util/alerts.dart';
+
 class CameraUtils {
   static int _maxPhotos = 2;
   static int _maxVideos = 1;
   static final picker = ImagePicker();
 
-  static Future<void> capturePhoto(
-      Function(File) fileadder, List<File> files) async {
+  static Future<void> capturePhoto(Function(File) fileadder,
+      List<File> files) async {
     final picker = ImagePicker();
     PickedFile? pickedFile = await picker.getImage(source: ImageSource.camera);
     if (pickedFile != null) {
@@ -23,8 +25,8 @@ class CameraUtils {
     }
   }
 
-  static Future<void> recordVideo(
-      BuildContext context, Function(File) fileadder, List<File> files) async {
+  static Future<void> recordVideo(BuildContext context,
+      Function(File) fileadder, List<File> files) async {
     final cameras = await availableCameras();
     final camera = cameras.first;
     final result = await Navigator.push(
@@ -43,12 +45,22 @@ class CameraUtils {
     }
   }
 
-  static Future<void> getMedia(
-      Function(List<File>) fileadder, List<File> files) async {
-    List<XFile> selectedFiles = await picker.pickMultipleMedia();
-    if (selectedFiles.length < _maxPhotos - files.length) {
+  static Future<void> getMedia(Function(List<File>) fileadder,
+      List<File> files, BuildContext context) async {
+    final picker = ImagePicker();
+    List<XFile>? selectedFiles = await picker.pickMultiImage(
+      maxWidth: 1920, // Limita el ancho de las imágenes seleccionadas
+      maxHeight: 1080, // Limita la altura de las imágenes seleccionadas
+      imageQuality: 80, // Calidad de la imagen (0 a 100)
+    );
+    if (selectedFiles != null) {
       List<File> filesParsed = selectedFiles.map((e) => File(e.path)).toList();
-      fileadder(filesParsed);
+      if (files.length + filesParsed.length <= _maxPhotos) {
+        fileadder(filesParsed);
+      } else {
+        ToastManager.showToast(
+            context, "El número máximo de fotos permitidas es $_maxPhotos");
+      }
     }
   }
 }

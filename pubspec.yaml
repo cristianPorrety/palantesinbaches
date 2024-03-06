@@ -47,6 +47,7 @@ dependencies:
   geolocator: ^11.0.0
   permission_handler: ^11.3.0
   fluttertoast: ^8.2.4
+  multiple_images_picker: ^1.0.1
 
 dev_dependencies:
   flutter_test:
