@@ -1063,7 +1063,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                     Navigator.pop(context);
                     CameraUtils.capturePhoto(addFile, filesSelected);
                   } else {
-                    ToastManager.showToast(context, "Ya ha llegado al maximo de evidencias.");
+                    Navigator.pop(context);
+                    ToastManager.showToastOnTop(context, "Ya ha llegado al maximo de evidencias.");
                   }
                 },
                 child: Container(

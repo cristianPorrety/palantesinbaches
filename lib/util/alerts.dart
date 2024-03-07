@@ -18,6 +18,16 @@ class ToastManager {
     ));
   }
 
+  static void showToastOnTop(BuildContext context, String message) {
+    final scaffold = ScaffoldMessenger.of(context);
+
+    scaffold.showSnackBar(SnackBar(
+      content: Text(message),
+      action: SnackBarAction(label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
+    ));
+  }
+
+
 }
 class ToastManager2 {
   static void showPersistentToast(BuildContext context, String message) async {
