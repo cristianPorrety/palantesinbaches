@@ -159,11 +159,12 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     if (currentLocation != null) {
       _addMarker(currentLocation);
       setAddressByLatIng(currentLocation);
+      setLatLng(currentLocation);
       mapController.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: currentLocation,
-            zoom: 30,
+            zoom: 15,
           ),
         ),
       );
@@ -568,7 +569,10 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   Widget _mapWithDirectionBody() {
     return Stack(
       children: [
-        MapFragment(),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 200),
+          child: MapFragment(),
+        ),
         DraggableScrollableSheet(
           initialChildSize: 0.5, // Tamaño inicial del sheet
           minChildSize: 0.5, // Tamaño mínimo al hacer swipe hacia abajo
@@ -614,7 +618,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                   SizedBox(
                     width: 2,
                   ),
-                  GestureDetector(
+                  /*GestureDetector(
                     onTap: () {
                       if (_directionFieldController.text.isEmpty) {
                         ToastManager.showToast(context,
@@ -626,24 +630,28 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                             context);
                       }
                     },
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 15),
-                      decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
-                          color: ColorsPalet.backgroundColor,
-                          border: Border.all(color: ColorsPalet.primaryColor)),
-                      height: 66,
-                      width: 60,
-                      child: Center(
-                        child: Icon(
-                          Icons.search,
-                          color: ColorsPalet.primaryColor,
-                          size: 33,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: Container(
+                        //margin: EdgeInsets.only(bottom: 15),
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10)),
+                            color: ColorsPalet.backgroundColor,
+                            border: Border.all(color: ColorsPalet.primaryColor)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                            child: Icon(
+                              Icons.search,
+                              color: ColorsPalet.primaryColor,
+                              size: 33,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             ],
@@ -902,7 +910,22 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         children: [
           TextField(
             controller: _directionFieldController,
+
             decoration: InputDecoration(
+              suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      if (_directionFieldController.text.isEmpty) {
+                        ToastManager.showToast(context,
+                            "El campo de dirección no puede estar vacío.");
+                      } else {
+                        RestMapRepository.getCoordinates(
+                            _directionFieldController.text,
+                            mapController,
+                            context);
+                      }
+                    },
+              ),
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: ColorsPalet.primaryColor)),
                 errorText: (isEmpty) ? 'Credenciales Incorrectas' : null,
