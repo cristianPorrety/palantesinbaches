@@ -25,7 +25,7 @@ class RestMapRepository {
         mapController.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(
           target: latLng,
-          zoom: 15,
+          zoom: 30,
         ),
         ));
 

@@ -158,11 +158,12 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     LatLng? currentLocation = await RestMapRepository.getCurrentLocation();
     if (currentLocation != null) {
       _addMarker(currentLocation);
+      setAddressByLatIng(currentLocation);
       mapController.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: currentLocation,
-            zoom: 15,
+            zoom: 30,
           ),
         ),
       );
@@ -437,7 +438,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   }
 
   void _Dialog_finalizar(BuildContext context) {
-    String uniqueId = Uuid().v4();
+    String uniqueId = Uuid().v4().toUpperCase();
     showDialog(
       context: context,
       barrierDismissible: false,
