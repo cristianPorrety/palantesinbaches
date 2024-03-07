@@ -141,7 +141,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       );
     }
     return Text(
-      (index < widgets.length - 1) ? "continuar" : "finalizar",
+      (index < widgets.length - 1) ? "Continuar" : "Finalizar",
       style: TextStyle(
           fontSize: 25,
           color: ColorsPalet.backgroundColor,
@@ -1036,8 +1036,12 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
               ),*/
               GestureDetector(
                 onTap: () {
-                  Navigator.pop(context);
-                  CameraUtils.capturePhoto(addFile, filesSelected);
+                  if(filesSelected.length < 2) {
+                    Navigator.pop(context);
+                    CameraUtils.capturePhoto(addFile, filesSelected);
+                  } else {
+                    ToastManager.showToast(context, "Ya ha llegado al maximo de evidencias.");
+                  }
                 },
                 child: Container(
                   height: 80,
