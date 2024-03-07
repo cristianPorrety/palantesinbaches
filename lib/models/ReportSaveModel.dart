@@ -12,6 +12,9 @@ class ConfirmDataModel {
   String? observation;
   String? reportDate;
   LatLng? latLng;
+  String? deviceId;
+  String? deviceFamily;
+  LatLng? currentReportLocation;
   List<File>? evidences;
 
   ConfirmDataModel();

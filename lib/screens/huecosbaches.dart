@@ -16,6 +16,7 @@ import 'package:pilasconelhueco/screens/mapwidget.dart';
 import 'package:pilasconelhueco/shared/labels.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
 import 'package:pilasconelhueco/util/alerts.dart';
+import 'package:pilasconelhueco/util/device_info.dart';
 import 'package:uuid/uuid.dart';
 
 class ReportPotholesScreen extends StatefulWidget {
@@ -42,7 +43,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   final TextEditingController _nameAndLastNameFieldController =
       TextEditingController();
   final TextEditingController _countrycodeFieldController =
-      TextEditingController(text:'57');
+      TextEditingController(text: '57');
   final TextEditingController _cellphoneFieldController =
       TextEditingController();
   final TextEditingController _emailFieldController = TextEditingController();
@@ -51,13 +52,33 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   bool isEmpty = false;
   int index = 0;
   List<File> filesSelected = [];
+  bool _isLoading = false;
   ConfirmDataModel? datamodel;
   String selectedOption = "Selecciona una opción....";
   var textInputFormatter =
       FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\sáéíóúÁÉÍÓÚüÜ]'));
 
+  void finalize(BuildContext context) {
+    setState(() {
+      _isLoading = true;
+    });
+    datamodel?.deviceFamily = DeviceInfoManager.getDeviceFamily();
+    var deviceId = DeviceInfoManager.getDeviceId();
+    deviceId.then(
+      (value) {
+        print("el device id: $value");
+        datamodel?.deviceId = value;
+        var getCurrentLocation = _getCurrentLocation();
+        getCurrentLocation.then((value) {
+          datamodel?.currentReportLocation = value;
+          _isLoading = false;
+          _Dialog_finalizar(context);
+        });
+      },
+    );
+  }
 
-   void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
 
@@ -109,9 +130,30 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     super.initState();
     // Initialize the variable in the initState method
     _requestLocationPermission();
-  //  _getCurrentLocationAndMark();
+    //  _getCurrentLocationAndMark();
     widgets = [_mapWithDirectionBody, _moreData, _confirmData];
   }
+
+  Widget _getContentToButton() {
+    if (_isLoading) {
+      return CircularProgressIndicator(
+        color: ColorsPalet.backgroundColor,
+      );
+    }
+    return Text(
+      (index < widgets.length - 1) ? "continuar" : "finalizar",
+      style: TextStyle(
+          fontSize: 25,
+          color: ColorsPalet.backgroundColor,
+          fontWeight: FontWeight.bold),
+    );
+  }
+
+  Future<LatLng?> _getCurrentLocation() async {
+    LatLng? currentLocation = await RestMapRepository.getCurrentLocation();
+    return currentLocation;
+  }
+
   void _getCurrentLocationAndMark() async {
     LatLng? currentLocation = await RestMapRepository.getCurrentLocation();
     if (currentLocation != null) {
@@ -126,6 +168,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       );
     }
   }
+
   // Street, sublocality, subadministrative area, administrative area, country
   Future<void> _requestLocationPermission() async {
     final PermissionStatus status = await Permission.location.request();
@@ -148,23 +191,21 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   }
 
   void _showPermissionDeniedToast(BuildContext context) {
-    ToastManager2.showPersistentToast(context, "Se rechazó el permiso para acceder a la ubicación. Por favor, acepte los permisos necesarios de la aplicación."
-    );
+    ToastManager2.showPersistentToast(context,
+        "Se rechazó el permiso para acceder a la ubicación. Por favor, acepte los permisos necesarios de la aplicación.");
   }
 
   void _showPermanentDeniedToast(BuildContext context) {
-    ToastManager2.showPersistentToast(context, "Se rechazó el permiso para acceder a la ubicación. Por favor, acepte los permisos necesarios de la aplicación."
-    );
+    ToastManager2.showPersistentToast(context,
+        "Se rechazó el permiso para acceder a la ubicación. Por favor, acepte los permisos necesarios de la aplicación.");
   }
-
-
-
 
   @override
   void dispose() {
     _overlayEntry.remove();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -198,87 +239,96 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         ),
       ),
       body: (index == 0)
-      ?  _mapWithDirectionBody()
-      : Column(
-        children: [
-          Expanded(
-            flex: 8,
-            child: ListView(physics: const ClampingScrollPhysics(), children: [
-              Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: widgets[index]()),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  height: 100,
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ? _mapWithDirectionBody()
+          : Column(
+              children: [
+                Expanded(
+                  flex: 8,
+                  child: ListView(
+                      physics: const ClampingScrollPhysics(),
                       children: [
-                        (index > 0)
-                            ? Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 8.0, left: 8.0),
-                                child: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      if (index > 0) {
-                                        index--;
-                                      }
-                                    });
-                                  },
-                                  icon: Icon(Icons.arrow_back),
-                                ),
-                              )
-                            : const SizedBox(
-                                width: 30,
-                              ),
-                        SizedBox(
-                          width: 150,
-                          height: 70,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              _ButtonForm(),
-                              SizedBox(
-                                height: 12,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 50),
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: 3,
-                                    itemBuilder: (context, i) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(left: 5),
-                                        child: Container(
-                                          width: 8,
-                                          height: 8,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: (i == index)
-                                                ? ColorsPalet.primaryColor
-                                                : ColorsPalet.itemColor,
+                        Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: widgets[index]()),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            height: 100,
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  (index > 0)
+                                      ? Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 8.0, left: 8.0),
+                                          child: IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                if (index > 0) {
+                                                  index--;
+                                                }
+                                              });
+                                            },
+                                            icon: Icon(Icons.arrow_back),
                                           ),
+                                        )
+                                      : const SizedBox(
+                                          width: 30,
                                         ),
-                                      );
-                                    },
+                                  SizedBox(
+                                    width: 150,
+                                    height: 70,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        _ButtonForm(),
+                                        SizedBox(
+                                          height: 12,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 50),
+                                            child: ListView.builder(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: 3,
+                                              itemBuilder: (context, i) {
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 5),
+                                                  child: Container(
+                                                    width: 8,
+                                                    height: 8,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      color: (i == index)
+                                                          ? ColorsPalet
+                                                              .primaryColor
+                                                          : ColorsPalet
+                                                              .itemColor,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              )
-                            ],
+                                  const SizedBox(
+                                    width: 30,
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 30,
                         )
-                      ],
-                    ),
-                  ),
-                ),
-              )
-              /*Container(
+                        /*Container(
                           width: 53,
                           height: 53,
                           child: Center(
@@ -300,11 +350,11 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                             ),
                           ),
                   )*/
-            ]),
-          ),
-        ],
-      ),
-      );
+                      ]),
+                ),
+              ],
+            ),
+    );
   }
 
   Widget _ButtonForm() {
@@ -341,10 +391,11 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                   _cellphoneFieldController.text.length != 10 ||
                   !_isValidEmail(_emailFieldController.text)) {
                 ToastManager.showToast(context,
-                    "Los datos ingresados no son correctos, o están incompletos");}
-              else if (selectedOption == "Selecciona una opción....") {
-                ToastManager.showToast(context, "Por favor seleccione una motivo de daño. ");}
-              else {
+                    "Los datos ingresados no son correctos, o están incompletos");
+              } else if (selectedOption == "Selecciona una opción....") {
+                ToastManager.showToast(
+                    context, "Por favor seleccione una motivo de daño. ");
+              } else {
                 setState(() {
                   ConfirmDataModel dataModelSecondScreen = ConfirmDataModel();
                   dataModelSecondScreen.address = datamodel!.address;
@@ -368,7 +419,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                 ToastManager.showToast(
                     context, "Debe agregar al menos un evidencia.");
               } else {
-                _Dialog_finalizar(context);
+                //TODO
+                finalize(context);
               }
             }
         }
@@ -379,16 +431,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         decoration: BoxDecoration(
             color: ColorsPalet.primaryColor,
             borderRadius: BorderRadius.circular(10)),
-        child: Center(
-            child: GestureDetector(
-          child: Text(
-            (index < widgets.length - 1) ? "continuar" : "finalizar",
-            style: TextStyle(
-                fontSize: 25,
-                color: ColorsPalet.backgroundColor,
-                fontWeight: FontWeight.bold),
-          ),
-        )),
+        child: Center(child: GestureDetector(child: _getContentToButton())),
       ),
     );
   }
@@ -477,7 +520,6 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     );
   }
 
-
   void _addMarker(LatLng latLng) {
     setState(() {
       markers.clear();
@@ -500,7 +542,6 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     setDirectionInputState(
         "${placemarks[0].street} ${placemarks[0].subLocality}, ${placemarks[0].subAdministrativeArea}, ${placemarks[0].administrativeArea}, ${placemarks[0].country}");
   }
-
 
   Widget MapFragment() {
     return Container(
@@ -569,21 +610,26 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                   Expanded(
                     child: _DirectionTextField(),
                   ),
-                  SizedBox(width: 2,),
+                  SizedBox(
+                    width: 2,
+                  ),
                   GestureDetector(
                     onTap: () {
                       if (_directionFieldController.text.isEmpty) {
-                        ToastManager.showToast(
-                            context, "El campo de dirección no puede estar vacío.");
+                        ToastManager.showToast(context,
+                            "El campo de dirección no puede estar vacío.");
                       } else {
                         RestMapRepository.getCoordinates(
-                            _directionFieldController.text, mapController, context);
+                            _directionFieldController.text,
+                            mapController,
+                            context);
                       }
                     },
                     child: Container(
                       margin: EdgeInsets.only(bottom: 15),
                       decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(Radius.circular(10)),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
                           color: ColorsPalet.backgroundColor,
                           border: Border.all(color: ColorsPalet.primaryColor)),
                       height: 66,
@@ -609,7 +655,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                     width: double.infinity,
                     child: Text(
                       PotholesScreenText.observationField,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                     )),
                 _TextAreaField(),
               ],
@@ -951,7 +998,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
             physics: const BouncingScrollPhysics(),
             children: [
               //Evidencia video
-           /*
+              /*
 
             GestureDetector(
                 onTap: () {
@@ -1159,7 +1206,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   }
 
   bool _isValidEmail(String input) {
-    RegExp regex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+    RegExp regex = RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
     return regex.hasMatch(input);
   }
 
@@ -1167,7 +1215,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     return GestureDetector(
       onTap: () async {
         final selected = await getModalScreen();
-        if (selected != null ) {
+        if (selected != null) {
           setState(() {
             selectedOption = selected;
           });

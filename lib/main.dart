@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pilasconelhueco/home/drawer.dart';
-import 'package:pilasconelhueco/home/homepage.dart';
-import 'package:pilasconelhueco/onboarding/onboardingpage.dart';
-import 'package:pilasconelhueco/screens/huecosbaches.dart';
-import 'package:pilasconelhueco/screens/huecosbaches/huecosbachesscreen.dart';
 import 'package:pilasconelhueco/screens/splash_screen.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
 
