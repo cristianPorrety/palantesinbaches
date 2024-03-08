@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
 import '../shared/labels.dart';
+import '../util/alerts.dart';
 
 class DataScreen extends StatefulWidget {
   @override
@@ -9,36 +10,24 @@ class DataScreen extends StatefulWidget {
 }
 
 class _DataScreenState extends State<DataScreen> {
-  // Controladores para los campos de texto
   TextEditingController nombreController = TextEditingController();
   TextEditingController celularController = TextEditingController();
   TextEditingController correoElectronicoController = TextEditingController();
   TextEditingController generoController = TextEditingController();
   TextEditingController edadController = TextEditingController();
 
-  bool isEditing = false; // Variable para controlar si se está editando o no
+  FocusNode nombreFocus = FocusNode();
+  FocusNode celularFocus = FocusNode();
+  FocusNode correoFocus = FocusNode();
+  FocusNode generoFocus = FocusNode();
+  FocusNode edadFocus = FocusNode();
 
-  @override
-  void initState() {
-    // Inicializa los controladores con valores iniciales vacíos
-    nombreController.text = "";
-    celularController.text = "";
-    correoElectronicoController.text = "";
-    generoController.text = "";
-    edadController.text = "";
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    // Libera los recursos de los controladores cuando se destruye el widget
-    nombreController.dispose();
-    celularController.dispose();
-    correoElectronicoController.dispose();
-    generoController.dispose();
-    edadController.dispose();
-    super.dispose();
-  }
+  bool isEditing = false;
+  String nombreErrorMessage = '';
+  String celErrorMessage = '';
+  String correoErrorMessage = '';
+  String generoErrorMessage = '';
+  String edadErrorMessage = '';
 
   @override
   Widget build(BuildContext context) {
@@ -57,17 +46,36 @@ class _DataScreenState extends State<DataScreen> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, size: 30, color: Colors.white),
             onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => HomeScreen()),
-              );
+              if (isEditing) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => DataScreen()),
+                );
+              } else {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+              }
             },
           ),
           centerTitle: true,
           title: Text(
             DataText.title,
-            style: TextStyle(color: ColorsPalet.backgroundColor, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: ColorsPalet.backgroundColor,
+                fontWeight: FontWeight.bold),
           ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.edit, size: 25, color: Colors.white),
+              onPressed: () {
+                setState(() {
+                  isEditing = true;
+                });
+              },
+            ),
+          ],
         ),
       ),
       body: SingleChildScrollView(
@@ -82,79 +90,213 @@ class _DataScreenState extends State<DataScreen> {
                   SizedBox(height: 50),
                   Padding(
                     padding: EdgeInsets.all(1.0),
-                    child: Icon(Icons.camera_alt, color: Colors.grey, size: 30,),
+                    child: Icon(
+                      Icons.camera_alt,
+                      color: Colors.grey,
+                      size: 30,
+                    ),
                   ),
                 ],
               ),
             ),
-            _buildListTile("Nombre", nombreController),
-            _buildListTile("Celular", celularController),
-            _buildListTile("Correo electrónico", correoElectronicoController),
-            _buildListTile("Genero", generoController),
-            _buildListTile("Edad", edadController),
-            Padding(
-              padding: EdgeInsets.only(top: 70.0),
-              child: Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      isEditing = false; // Desactivar edición al guardar
-                    });
-                    // Aquí puedes agregar lógica para guardar los cambios
-                  },
-                  child: Text(
-                    'Guardar',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(ColorsPalet.primaryColor),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40.0),
+            SizedBox(height: 50),
+            _buildListTile("Nombre", nombreController, nombreErrorMessage, nombreFocus),
+            _buildListTile("Celular", celularController, celErrorMessage, celularFocus),
+            _buildListTile("Correo electrónico", correoElectronicoController, correoErrorMessage, correoFocus),
+            _buildListTile("Genero", generoController, generoErrorMessage, generoFocus),
+            _buildListTile("Edad", edadController, edadErrorMessage, edadFocus),
+            if (isEditing)
+              Padding(
+                padding: EdgeInsets.only(top: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          isEditing = false;
+                        });
+                      },
+                      child: Text('Cancelar',style: TextStyle(fontWeight: FontWeight.w400,color: Colors.white, fontSize: 20),),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(40.0),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    SizedBox(width: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_allErrorMessagesAreEmpty()) {
+                          setState(() {
+                            isEditing = false;
+                          });
+                        } else {
+                          ToastManager.showToast(context, "Por favor, verifique que los datos ingresados sean correctos.");
+                        }
+                      },
+                      child: Text('Guardar', style: TextStyle(fontWeight: FontWeight.w400,color: Colors.white , fontSize: 20),),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(ColorsPalet.primaryColor),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(40.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildListTile(String title, TextEditingController controller) {
+  Widget _buildListTile(String title, TextEditingController controller,
+      String errorMessage, FocusNode focusNode) {
     return ListTile(
       title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
       subtitle: isEditing
-          ? TextFormField(
-        controller: controller,
-        style: TextStyle(fontSize: 16.0),
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.grey[200],
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: BorderSide(color: Colors.transparent),
+          ? Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextFormField(
+            controller: controller,
+            focusNode: focusNode,
+            style: TextStyle(fontSize: 16.0),
+            keyboardType: title == "Celular" || title == "Edad" ? TextInputType.number : null,
+
+            onChanged: (value) {
+              setState(() {
+                if (title == "Nombre") {
+                  if (!_isTextValid(value)) {
+                    nombreErrorMessage = 'Solo se permiten letras.';
+                  } else {
+                    nombreErrorMessage = '';
+                  }
+                } else if (title == "Celular") {
+                  if (!_isTextValid2(value)) {
+                    celErrorMessage = 'Solo se permiten números.';
+                  } else {
+                    celErrorMessage = '';
+                  }
+                } else if (title == "Correo electrónico") {
+                  if (!_isEmailValid(value)) {
+                    correoErrorMessage = 'Formato de correo no válido';
+                  } else {
+                    correoErrorMessage = '';
+                  }
+                } else if (title == "Genero") {
+                  if (!_isTextValid3(value)) {
+                    generoErrorMessage = 'Solo se permiten letras.';
+                  } else {
+                    generoErrorMessage = '';
+                  }
+                } else if (title == "Edad") {
+                  if (!_isAgeValid(value)) {
+                    edadErrorMessage = 'Edad ingresada no válida';
+                  } else {
+                    edadErrorMessage = '';
+                  }
+                }
+              });
+            },
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.grey[200],
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(
+                  color: errorMessage.isNotEmpty ? Colors.red : Colors.transparent,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(color: ColorsPalet.primaryColor),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(color: Colors.red),
+              ),
+            ),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: BorderSide(color: ColorsPalet.primaryColor),
-          ),
-        ),
+          if (errorMessage.isNotEmpty)
+            Row(
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 20,
+                ),
+                SizedBox(width: 5),
+                Text(errorMessage,
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.w300)),
+              ],
+            ),
+        ],
       )
           : Text(controller.text),
-      trailing: InkWell(
-        onTap: () {
-          setState(() {
-            isEditing = true;
-          });
-        },
-        child: Icon(Icons.edit),
-      ),
+      trailing: null, // Eliminar completamente el icono de edición
     );
+  }
+
+  bool _isTextValid(String text) {
+    if (text.isEmpty) {
+      return true;
+    }
+    final RegExp regex = RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚ\s]+$');
+    return regex.hasMatch(text);
+  }
+
+  bool _isTextValid2(String text) {
+    if (text.isEmpty) {
+      return true;
+    }
+    final RegExp regex = RegExp(r'^[0-9]+$');
+    return regex.hasMatch(text);
+  }
+
+  bool _isEmailValid(String email) {
+    final RegExp regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return regex.hasMatch(email);
+  }
+
+  bool _isAgeValid(String age) {
+    if (age.isEmpty) {
+      return true;
+    }
+
+    final RegExp regex = RegExp(r'^\d+$');
+
+    if (!regex.hasMatch(age)) {
+      return false;
+    }
+
+    final int? ageValue = int.tryParse(age);
+
+    return ageValue != null && ageValue >= 0 && ageValue < 110;
+  }
+
+  bool _isTextValid3(String text) {
+    if (text.isEmpty) {
+      return true;
+    }
+    final RegExp regex = RegExp(r'^[a-zA-Z0-9\sáéíóúÁÉÍÓÚ]+$');
+    return regex.hasMatch(text);
+  }
+
+  bool _allErrorMessagesAreEmpty() {
+    return nombreErrorMessage.isEmpty &&
+        celErrorMessage.isEmpty &&
+        correoErrorMessage.isEmpty &&
+        generoErrorMessage.isEmpty &&
+        edadErrorMessage.isEmpty;
   }
 }
