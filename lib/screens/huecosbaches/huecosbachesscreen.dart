@@ -7,6 +7,7 @@ import 'package:pilasconelhueco/screens/huecosbaches/camerautils.dart';
 import 'package:pilasconelhueco/screens/mapwidget.dart';
 import 'package:pilasconelhueco/shared/labels.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
+import 'package:pilasconelhueco/util/alerts.dart';
 import 'package:pilasconelhueco/util/inheritedwiidget.dart';
 
 class DirectionBody extends StatefulWidget {
@@ -584,7 +585,13 @@ class _MoreDataScreenState extends State<MoreDataScreen> {
         children: [
           GestureDetector(
             onTap: () {
-              _openModal(context);
+              print("selected files: ${selectedFiles.length}");
+              if(selectedFiles.length < 2) {
+                _openModal(context);
+              } else {
+                Navigator.pop(context);
+                ToastManager.showToast(context, "Ya ha llegado al maximo de evidencias.");
+              }
             },
             child: Container(
               decoration: BoxDecoration(
@@ -604,7 +611,13 @@ class _MoreDataScreenState extends State<MoreDataScreen> {
           ),
           GestureDetector(
             onTap: () {
-              CameraUtils.getMedia(addMultipleFiles, selectedFiles,context);
+              print("selected files: ${selectedFiles.length}");
+              if(selectedFiles.length < 2) {
+                CameraUtils.getMedia(addMultipleFiles, selectedFiles,context);
+              } else {
+                Navigator.pop(context);
+                ToastManager.showToast(context, "Ya ha llegado al maximo de evidencias.");
+              }
             },
             child: Container(
               decoration: BoxDecoration(

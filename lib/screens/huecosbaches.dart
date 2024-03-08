@@ -1357,39 +1357,47 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         children: [
           GestureDetector(
             onTap: () {
-              _openModal(context);
+              if(filesSelected.length < 2) {
+                _openModal(context);
+              } else {
+                ToastManager.showToast(context, "Ya ha llegado al maximo de evidencias.");
+              }
             },
             child: Container(
               decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                   color: ColorsPalet.backgroundColor,
-                  border: Border.all(color: ColorsPalet.primaryColor)),
+                  border: Border.all(color: (filesSelected.length < 2) ? ColorsPalet.primaryColor : Colors.grey)),
               height: 40,
               width: 140,
               child: Center(
                   child: Text(
                 "Tomar Evidencia",
                 style: TextStyle(
-                    color: ColorsPalet.primaryColor,
+                    color: (filesSelected.length < 2) ? ColorsPalet.primaryColor : Colors.grey,
                     fontWeight: FontWeight.bold),
               )),
             ),
           ),
           GestureDetector(
             onTap: () {
-              CameraUtils.getMedia(addMultipleFiles, filesSelected, context);
+              if(filesSelected.length < 2) {
+                CameraUtils.getMedia(addMultipleFiles, filesSelected,context);
+              } else {
+                ToastManager.showToast(context, "Ya ha llegado al maximo de evidencias.");
+              }
             },
             child: Container(
               decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                   color: ColorsPalet.backgroundColor,
-                  border: Border.all(color: ColorsPalet.primaryColor)),
+                  border: Border.all(color: (filesSelected.length < 2) ? ColorsPalet.primaryColor : Colors.grey)),
               height: 40,
               width: 140,
               child: Center(
                   child: Text("Galeria",
                       style: TextStyle(
-                          color: ColorsPalet.primaryColor,
+                          color: (filesSelected.length < 2) ? ColorsPalet.primaryColor : Colors.grey,
                           fontWeight: FontWeight.bold))),
             ),
           ),
