@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
 import '../shared/labels.dart';
@@ -14,7 +15,7 @@ class _DataScreenState extends State<DataScreen> {
   TextEditingController celularController = TextEditingController();
   TextEditingController correoElectronicoController = TextEditingController();
   TextEditingController generoController = TextEditingController();
-  TextEditingController edadController = TextEditingController();
+  DateTime? selectedDate; // Variable para almacenar la fecha seleccionada
 
   FocusNode nombreFocus = FocusNode();
   FocusNode celularFocus = FocusNode();
@@ -28,7 +29,7 @@ class _DataScreenState extends State<DataScreen> {
   String correoErrorMessage = '';
   String generoErrorMessage = '';
   String edadErrorMessage = '';
-
+  TextEditingController edadController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,7 +105,7 @@ class _DataScreenState extends State<DataScreen> {
             _buildListTile("Celular", celularController, celErrorMessage, celularFocus),
             _buildListTile("Correo electrónico", correoElectronicoController, correoErrorMessage, correoFocus),
             _buildListTile("Genero", generoController, generoErrorMessage, generoFocus),
-            _buildListTile("Edad", edadController, edadErrorMessage, edadFocus),
+            _buildDateSelectorTile("Edad", selectedDate),
             if (isEditing)
               Padding(
                 padding: EdgeInsets.only(top: 20.0),
@@ -165,66 +166,70 @@ class _DataScreenState extends State<DataScreen> {
           ? Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextFormField(
-            controller: controller,
-            focusNode: focusNode,
-            style: TextStyle(fontSize: 16.0),
-            keyboardType: title == "Celular" || title == "Edad" ? TextInputType.number : null,
-
-            onChanged: (value) {
-              setState(() {
-                if (title == "Nombre") {
-                  if (!_isTextValid(value)) {
-                    nombreErrorMessage = 'Solo se permiten letras.';
-                  } else {
-                    nombreErrorMessage = '';
+          if (title == "Edad")
+            Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text(
+                // Mostrar el texto calculado de la edad
+                _calculateAge(),
+                style: TextStyle(fontSize: 16),
+              ),
+            )
+          else
+            TextFormField(
+              controller: controller,
+              focusNode: focusNode,
+              style: TextStyle(fontSize: 16.0),
+              keyboardType:
+              title == "Celular" || title == "Edad" ? TextInputType.number : null,
+              onChanged: (value) {
+                setState(() {
+                  if (title == "Nombre") {
+                    if (!_isTextValid(value)) {
+                      nombreErrorMessage = 'Solo se permiten letras.';
+                    } else {
+                      nombreErrorMessage = '';
+                    }
+                  } else if (title == "Celular") {
+                    if (!_isTextValid2(value)) {
+                      celErrorMessage = 'Solo se permiten números.';
+                    } else {
+                      celErrorMessage = '';
+                    }
+                  } else if (title == "Correo electrónico") {
+                    if (!_isEmailValid(value)) {
+                      correoErrorMessage = 'Formato de correo no válido';
+                    } else {
+                      correoErrorMessage = '';
+                    }
+                  } else if (title == "Genero") {
+                    if (!_isTextValid3(value)) {
+                      generoErrorMessage = 'Solo se permiten letras.';
+                    } else {
+                      generoErrorMessage = '';
+                    }
                   }
-                } else if (title == "Celular") {
-                  if (!_isTextValid2(value)) {
-                    celErrorMessage = 'Solo se permiten números.';
-                  } else {
-                    celErrorMessage = '';
-                  }
-                } else if (title == "Correo electrónico") {
-                  if (!_isEmailValid(value)) {
-                    correoErrorMessage = 'Formato de correo no válido';
-                  } else {
-                    correoErrorMessage = '';
-                  }
-                } else if (title == "Genero") {
-                  if (!_isTextValid3(value)) {
-                    generoErrorMessage = 'Solo se permiten letras.';
-                  } else {
-                    generoErrorMessage = '';
-                  }
-                } else if (title == "Edad") {
-                  if (!_isAgeValid(value)) {
-                    edadErrorMessage = 'Edad ingresada no válida';
-                  } else {
-                    edadErrorMessage = '';
-                  }
-                }
-              });
-            },
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.grey[200],
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(
-                  color: errorMessage.isNotEmpty ? Colors.red : Colors.transparent,
+                });
+              },
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.grey[200],
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(
+                    color: errorMessage.isNotEmpty ? Colors.red : Colors.transparent,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(color: ColorsPalet.primaryColor),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(color: Colors.red),
                 ),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(color: ColorsPalet.primaryColor),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(color: Colors.red),
-              ),
             ),
-          ),
           if (errorMessage.isNotEmpty)
             Row(
               children: [
@@ -245,6 +250,98 @@ class _DataScreenState extends State<DataScreen> {
           : Text(controller.text),
       trailing: null, // Eliminar completamente el icono de edición
     );
+  }
+
+
+  String _calculateAge() {
+    // Verificar si la fecha de nacimiento está definida
+    if (selectedDate != null) {
+      // Calcular la edad
+      final age = DateTime.now().difference(selectedDate!).inDays ~/ 365;
+      return age.toString(); // Devolver la edad como una cadena
+    } else {
+      return '';
+    }
+  }
+
+  Widget _buildDateSelectorTile(String title, DateTime? selectedDate) {
+    return ListTile(
+      title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+      subtitle: isEditing
+          ? Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: () {
+              _selectDate(context);
+            },
+            child: Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.calendar_today,
+                    color: Colors.grey,
+                    size: 20,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    // Mostrar la fecha seleccionada si está disponible, de lo contrario, mostrar "Seleccione una fecha"
+                    selectedDate != null
+                        ? "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}"
+                        : "Seleccione una fecha",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      )
+      // Si no está editando, mostrar la edad en lugar de la fecha
+          : Text(selectedDate != null
+          ? _calculateAgeFromDate(selectedDate)
+          : ""),
+      trailing: null, // Eliminar completamente el icono de edición
+    );
+  }
+
+  String _calculateAgeFromDate(DateTime? selectedDate) {
+    if (selectedDate != null) {
+      final age = DateTime.now().difference(selectedDate).inDays ~/ 365;
+      return age.toString();
+    } else {
+      return '';
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: ColorsPalet.primaryColor,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: ColorsPalet.primaryColor,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        edadController.text = _calculateAgeFromDate(selectedDate);
+      });
+    }
   }
 
   bool _isTextValid(String text) {
