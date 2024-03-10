@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,12 +10,15 @@ import 'package:flutter/widgets.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pilasconelhueco/bloc/conectivity_bloc.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/models/ReportSaveModel.dart';
+import 'package:pilasconelhueco/models/conectivity_status.dart';
 import 'package:pilasconelhueco/repository/maprest.dart';
 import 'package:pilasconelhueco/screens/huecosbaches/camerautils.dart';
 import 'package:pilasconelhueco/screens/mapwidget.dart';
 import 'package:pilasconelhueco/shared/labels.dart';
+import 'package:pilasconelhueco/shared/service_locator.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
 import 'package:pilasconelhueco/util/alerts.dart';
 import 'package:pilasconelhueco/util/device_info.dart';
@@ -70,7 +75,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         datamodel?.deviceId = value;
         var getCurrentLocation = _getCurrentLocation();
         getCurrentLocation.then((value) {
-          datamodel?.currentReportLocation = value;
+          datamodel?.currentReportLatitude = value!.latitude.toString();
+          datamodel?.currentReportLongitude = value!.longitude.toString();
           _isLoading = false;
           _Dialog_finalizar(context);
         });
@@ -131,6 +137,9 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     // Initialize the variable in the initState method
     _requestLocationPermission();
     //  _getCurrentLocationAndMark();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      getit<ConectivityCubit>().isInternetConnected(result);
+    });
     widgets = [_mapWithDirectionBody, _moreData, _confirmData];
   }
 
@@ -377,7 +386,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                   dataModelFirstScreen.address = _directionFieldController.text;
                   dataModelFirstScreen.observation =
                       _obsercationFieldController.text;
-                  dataModelFirstScreen.latLng = coordinates;
+                  dataModelFirstScreen.latitude = coordinates!.latitude.toString();
+                  dataModelFirstScreen.longitude = coordinates!.longitude.toString();
                   datamodel = dataModelFirstScreen;
                   index++;
                 });
