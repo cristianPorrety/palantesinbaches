@@ -1,9 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pilasconelhueco/bloc/conectivity_bloc.dart';
+import 'package:pilasconelhueco/bloc/user_bloc.dart';
 import 'package:pilasconelhueco/screens/splash_screen.dart';
+import 'package:pilasconelhueco/shared/service_locator.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  registerSingletons();
+  runApp(const BlocProviders());
+}
+
+class BlocProviders extends StatelessWidget {
+  const BlocProviders({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => getit<UsuarioCubit>(), lazy: true,),
+        BlocProvider(create: (context) => getit<ConectivityCubit>(),)
+      ], 
+      child: const MyApp()
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {

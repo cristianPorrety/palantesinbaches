@@ -13,6 +13,7 @@ class ConfirmDataModel {
   String? email;
   String? address;
   String? motive;
+  String? reportId;
   String? observation;
   String? reportDate;
   String? latitude;
@@ -21,6 +22,8 @@ class ConfirmDataModel {
   String? deviceFamily;
   String? currentReportLatitude;
   String? currentReportLongitude;
+  bool? loaded;
+  int? onServer;
   List<File>? evidences;
 
   ConfirmDataModel();
@@ -57,6 +60,7 @@ class ConfirmDataModel {
     confirmData.reportDate = map['reportDate'];
     confirmData.latitude = map['latitude'];
     confirmData.longitude = map['longitude'];
+    confirmData.loaded = true;
     confirmData.deviceId = map['deviceId'];
     confirmData.deviceFamily = map['deviceFamily'];
     confirmData.currentReportLatitude = map['currentReportLatitude'];

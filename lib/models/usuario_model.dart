@@ -39,7 +39,6 @@ class UsuarioReport {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': id,
       'nombre': nombre,
       'celular': celular,
       'correoElectronico': correoElectronico,

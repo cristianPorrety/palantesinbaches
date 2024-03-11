@@ -19,7 +19,7 @@ class DatabaseManipulator {
   }
 
 
-  void initializeDB() async {
+  Future<void> initializeDB() async {
     String path = await getDatabasesPath();
     
     db = await openDatabase(
@@ -27,7 +27,7 @@ class DatabaseManipulator {
       onCreate: (database, version) async {
          await database.execute( 
            'CREATE TABLE confirm_data('
-        'id INTEGER PRIMARY KEY, '
+        'id INTEGER PRIMARY KEY AUTOINCREMENT, '
         'name TEXT, '
         'cellphone TEXT, '
         'email TEXT, '
@@ -35,14 +35,16 @@ class DatabaseManipulator {
         'motive TEXT, '
         'observation TEXT, '
         'reportDate TEXT, '
-        'latLng TEXT, '
+        'latitude TEXT, '
+        'longitude TEXT, '
+        'onServer INTEGER, '
         'deviceId TEXT, '
         'deviceFamily TEXT, '
         'currentReportLocation TEXT)',
       );
       await database.execute(
         'CREATE TABLE usuario_report('
-        'id INTEGER PRIMARY KEY, '
+        'id INTEGER PRIMARY KEY AUTOINCREMENT, '
         'nombre TEXT, '
         'celular TEXT, '
         'correoElectronico TEXT, '
@@ -58,6 +60,8 @@ class DatabaseManipulator {
     if(await thereIsItems()) {
       _updateUser(user);
     } else {
+      user.id = 1;
+      print(user.toMap());
       await db.insert(
       'usuario_report', user.toMap(), 
       conflictAlgorithm: ConflictAlgorithm.replace);   
@@ -73,11 +77,12 @@ class DatabaseManipulator {
   Future<bool> thereIsItems() async {
     final List<Map<String, Object?>> queryResult = 
       await db.query('usuario_report');
-    return queryResult.isEmpty;
+    return queryResult.isNotEmpty;
   }
 
   void _updateUser(UsuarioReport user) async {
     UsuarioReport currentUsuarioReportId = await getItems();
+    print(currentUsuarioReportId.toString());
     await db.update(
         "usuario_report",
         user.toMap(),
@@ -87,8 +92,15 @@ class DatabaseManipulator {
 
 
   Future<void> createReport(ConfirmDataModel user) async {
+    user.onServer = 0;
     await db.insert(
       'confirm_data', user.toMap(), 
+      conflictAlgorithm: ConflictAlgorithm.replace);   
+  }
+
+  Future<void> turnOfOnServer(bool user) async {
+    await db.update(
+      'confirm_data', {'onServer': (user) ? 1 : 0}, 
       conflictAlgorithm: ConflictAlgorithm.replace);   
   }
 
@@ -96,6 +108,18 @@ class DatabaseManipulator {
     final List<Map<String, Object?>> queryResult = 
       await db.query('confirm_data');
     return queryResult.map((e) => ConfirmDataModel.fromMap(e)).toList();
+  }
+
+  Future<List<ConfirmDataModel>> getReportsNotSent() async {
+    final List<Map<String, Object?>> queryResult = 
+      await db.query('confirm_data', where: 'onServer = 0');
+    return queryResult.map((e) => ConfirmDataModel.fromMap(e)).toList();
+  }
+
+  Future<bool> thereIsReports() async{
+    final List<Map<String, Object?>> queryResult = 
+      await db.query('confirm_data', where: 'onServer = 0');
+    return queryResult.isNotEmpty;
   }
 
 }

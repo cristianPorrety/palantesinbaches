@@ -1,22 +1,21 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pilasconelhueco/bloc/conectivity_bloc.dart';
+import 'package:pilasconelhueco/bloc/user_bloc.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/models/ReportSaveModel.dart';
-import 'package:pilasconelhueco/models/conectivity_status.dart';
+import 'package:pilasconelhueco/repository/dataservice.dart';
 import 'package:pilasconelhueco/repository/maprest.dart';
 import 'package:pilasconelhueco/screens/huecosbaches/camerautils.dart';
-import 'package:pilasconelhueco/screens/mapwidget.dart';
 import 'package:pilasconelhueco/shared/labels.dart';
 import 'package:pilasconelhueco/shared/service_locator.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
@@ -52,6 +51,9 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   final TextEditingController _cellphoneFieldController =
       TextEditingController();
   final TextEditingController _emailFieldController = TextEditingController();
+  String emailText = "";
+  String cellphoneText = "";
+  String nombreText = "";
   late List<Widget Function()> widgets;
   LatLng? coordinates;
   bool isEmpty = false;
@@ -77,8 +79,12 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         getCurrentLocation.then((value) {
           datamodel?.currentReportLatitude = value!.latitude.toString();
           datamodel?.currentReportLongitude = value!.longitude.toString();
-          _isLoading = false;
-          _Dialog_finalizar(context);
+          setState(() {
+            _isLoading = false;
+          });
+          if(getit<ConectivityCubit>().state.connected!) {
+            getit<DataService>().postReport(datamodel!).then((value) => _Dialog_finalizar(context));
+          }
         });
       },
     );
@@ -138,9 +144,14 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     _requestLocationPermission();
     //  _getCurrentLocationAndMark();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      print("on net change test: $result");
       getit<ConectivityCubit>().isInternetConnected(result);
-    });
+    }); 
     widgets = [_mapWithDirectionBody, _moreData, _confirmData];
+    nombreText = getit<UsuarioCubit>().state.nombre ?? "";
+    emailText = getit<UsuarioCubit>().state.correoElectronico ?? "";
+    cellphoneText = getit<UsuarioCubit>().state.celular ?? "";
+    //_nameAndLastNameFieldController.text = usuarioCubit.state.nombre ?? "";
   }
 
   Widget _getContentToButton() {
@@ -219,6 +230,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60.0),
@@ -1110,6 +1122,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   }
 
   Widget _NameLastNameTextField() {
+    _nameAndLastNameFieldController.text = nombreText;
+    
     return Container(
       margin: const EdgeInsets.only(bottom: 10, top: 10),
       decoration: BoxDecoration(
@@ -1123,6 +1137,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
           TextField(
             controller: _nameAndLastNameFieldController,
             inputFormatters: [textInputFormatter],
+            onChanged: (value) => setState(() => nombreText = value),
             decoration: InputDecoration(
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: ColorsPalet.primaryColor)),
@@ -1142,6 +1157,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   }
 
   Widget _CellPhoneField() {
+    _cellphoneFieldController.text = cellphoneText;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10, top: 10),
       decoration: BoxDecoration(
@@ -1178,8 +1195,10 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
             child: Container(
               child: TextField(
                 controller: _cellphoneFieldController,
-                onChanged: (_) {
-                  setState(() {});
+                onChanged: (cell) {
+                  setState(() {
+                    cellphoneText = cell;
+                  });
                 },
                 maxLength: 10,
                 keyboardType: TextInputType.phone,
@@ -1202,6 +1221,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   }
 
   Widget _EmailTextField() {
+    _emailFieldController.text = emailText;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10, top: 10),
       decoration: BoxDecoration(
@@ -1215,8 +1236,10 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         children: [
           TextField(
             controller: _emailFieldController,
-            onChanged: (_) {
-              setState(() {});
+            onChanged: (text) {
+              setState(() {
+                emailText = text;
+              });
             },
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(

@@ -1,6 +1,12 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
+import 'package:pilasconelhueco/bloc/conectivity_bloc.dart';
+import 'package:pilasconelhueco/bloc/user_bloc.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
+import 'package:pilasconelhueco/models/usuario_model.dart';
+import 'package:pilasconelhueco/shared/service_locator.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
 import '../shared/labels.dart';
 import '../util/alerts.dart';
@@ -15,6 +21,13 @@ class _DataScreenState extends State<DataScreen> {
   TextEditingController celularController = TextEditingController();
   TextEditingController correoElectronicoController = TextEditingController();
   TextEditingController generoController = TextEditingController();
+
+  String nombreText = "";
+  String celularText = "";
+  String correoElectronicoText = "";
+  String generoText = "";
+
+  int? currentAge;
   DateTime? selectedDate; // Variable para almacenar la fecha seleccionada
 
   FocusNode nombreFocus = FocusNode();
@@ -30,8 +43,27 @@ class _DataScreenState extends State<DataScreen> {
   String generoErrorMessage = '';
   String edadErrorMessage = '';
   TextEditingController edadController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      nombreText = getit<UsuarioCubit>().state.nombre ?? "";
+      celularText = getit<UsuarioCubit>().state.celular ?? "";
+      correoElectronicoText = getit<UsuarioCubit>().state.correoElectronico ?? "";
+      generoText = getit<UsuarioCubit>().state.genero ?? "";
+      currentAge = getit<UsuarioCubit>().state.edad;
+    });
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      print("on net change test: $result");
+      getit<ConectivityCubit>().isInternetConnected(result);
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    var usuarioCubit = context.watch<UsuarioCubit>();
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80.0),
@@ -101,11 +133,11 @@ class _DataScreenState extends State<DataScreen> {
               ),
             ),
             SizedBox(height: 50),
-            _buildListTile("Nombre", nombreController, nombreErrorMessage, nombreFocus),
-            _buildListTile("Celular", celularController, celErrorMessage, celularFocus),
-            _buildListTile("Correo electrónico", correoElectronicoController, correoErrorMessage, correoFocus),
-            _buildListTile("Genero", generoController, generoErrorMessage, generoFocus),
-            _buildDateSelectorTile("Edad", selectedDate),
+            _buildListTile("Nombre", nombreController, nombreErrorMessage, nombreFocus, nombreText),
+            _buildListTile("Celular", celularController, celErrorMessage, celularFocus, celularText),
+            _buildListTile("Correo electrónico", correoElectronicoController, correoErrorMessage, correoFocus, correoElectronicoText),
+            _buildListTile("Genero", generoController, generoErrorMessage, generoFocus, generoText),
+            _buildDateSelectorTile("Edad"),
             if (isEditing)
               Padding(
                 padding: EdgeInsets.only(top: 20.0),
@@ -135,6 +167,7 @@ class _DataScreenState extends State<DataScreen> {
                           setState(() {
                             isEditing = false;
                           });
+                          usuarioCubit.createOrUpdateDataInfo(UsuarioReport(nombre: nombreController.text, celular: celularController.text, correoElectronico: correoElectronicoController.text, edad: currentAge, genero: generoController.text));
                         } else {
                           ToastManager.showToast(context, "Por favor, verifique que los datos ingresados sean correctos.");
                         }
@@ -159,24 +192,15 @@ class _DataScreenState extends State<DataScreen> {
   }
 
   Widget _buildListTile(String title, TextEditingController controller,
-      String errorMessage, FocusNode focusNode) {
+      String errorMessage, FocusNode focusNode, String defaultValue) {
+    controller.text = defaultValue;
     return ListTile(
       title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
       subtitle: isEditing
           ? Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (title == "Edad")
-            Padding(
-              padding: EdgeInsets.only(top: 8.0),
-              child: Text(
-                // Mostrar el texto calculado de la edad
-                _calculateAge(),
-                style: TextStyle(fontSize: 16),
-              ),
-            )
-          else
-            TextFormField(
+            TextField(
               controller: controller,
               focusNode: focusNode,
               style: TextStyle(fontSize: 16.0),
@@ -185,24 +209,28 @@ class _DataScreenState extends State<DataScreen> {
               onChanged: (value) {
                 setState(() {
                   if (title == "Nombre") {
+                    nombreText = value;
                     if (!_isTextValid(value)) {
                       nombreErrorMessage = 'Solo se permiten letras.';
                     } else {
                       nombreErrorMessage = '';
                     }
                   } else if (title == "Celular") {
+                    celularText = value;
                     if (!_isTextValid2(value)) {
                       celErrorMessage = 'Solo se permiten números.';
                     } else {
                       celErrorMessage = '';
                     }
                   } else if (title == "Correo electrónico") {
+                    correoElectronicoText = value;
                     if (!_isEmailValid(value)) {
                       correoErrorMessage = 'Formato de correo no válido';
                     } else {
                       correoErrorMessage = '';
                     }
                   } else if (title == "Genero") {
+                    generoText = value;
                     if (!_isTextValid3(value)) {
                       generoErrorMessage = 'Solo se permiten letras.';
                     } else {
@@ -253,18 +281,7 @@ class _DataScreenState extends State<DataScreen> {
   }
 
 
-  String _calculateAge() {
-    // Verificar si la fecha de nacimiento está definida
-    if (selectedDate != null) {
-      // Calcular la edad
-      final age = DateTime.now().difference(selectedDate!).inDays ~/ 365;
-      return age.toString(); // Devolver la edad como una cadena
-    } else {
-      return '';
-    }
-  }
-
-  Widget _buildDateSelectorTile(String title, DateTime? selectedDate) {
+  Widget _buildDateSelectorTile(String title) {
     return ListTile(
       title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
       subtitle: isEditing
@@ -287,8 +304,9 @@ class _DataScreenState extends State<DataScreen> {
                   SizedBox(width: 10),
                   Text(
                     // Mostrar la fecha seleccionada si está disponible, de lo contrario, mostrar "Seleccione una fecha"
-                    selectedDate != null
-                        ? "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}"
+                    currentAge != null
+                        // ignore: unnecessary_string_interpolations
+                        ? "${currentAge}"
                         : "Seleccione una fecha",
                     style: TextStyle(fontSize: 16),
                   ),
@@ -299,7 +317,7 @@ class _DataScreenState extends State<DataScreen> {
         ],
       )
       // Si no está editando, mostrar la edad en lugar de la fecha
-          : Text(selectedDate != null
+      : Text(selectedDate != null
           ? _calculateAgeFromDate(selectedDate)
           : ""),
       trailing: null, // Eliminar completamente el icono de edición
@@ -309,6 +327,9 @@ class _DataScreenState extends State<DataScreen> {
   String _calculateAgeFromDate(DateTime? selectedDate) {
     if (selectedDate != null) {
       final age = DateTime.now().difference(selectedDate).inDays ~/ 365;
+      setState(() {
+        currentAge = age;
+      });
       return age.toString();
     } else {
       return '';

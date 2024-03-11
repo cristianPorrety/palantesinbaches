@@ -1,12 +1,15 @@
 
 
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:pilasconelhueco/bloc/conectivity_bloc.dart';
 import 'package:pilasconelhueco/home/drawer.dart';
 import 'package:pilasconelhueco/models/Report.dart';
 import 'package:pilasconelhueco/screens/DataScreen.dart';
 import 'package:pilasconelhueco/screens/otherApps.dart';
 import 'package:pilasconelhueco/shared/labels.dart';
+import 'package:pilasconelhueco/shared/service_locator.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
 
 import '../screens/contact.dart';
@@ -28,6 +31,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  @override
+  void initState() {
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      print("on net change test: $result");
+      getit<ConectivityCubit>().isInternetConnected(result);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pilasconelhueco/home/homepage.dart';
+import 'package:pilasconelhueco/repository/databasemanager.dart';
+import 'package:pilasconelhueco/shared/service_locator.dart';
 
 import '../onboarding/onboardingpage.dart';
 import 'huecosbaches.dart';
@@ -12,10 +15,14 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration(seconds: 2), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) =>OnboardingScreen()),
-      );
+      getit<DatabaseManipulator>().thereIsItems()
+      .then((value) {
+        if(value) {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen(),));
+        } else {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OnboardingScreen(),));
+        }
+      });
     });
   }
 
