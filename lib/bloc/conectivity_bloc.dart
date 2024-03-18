@@ -28,9 +28,11 @@ class ConectivityCubit extends Cubit<ConectivityStatus> {
   void isInternetConnected(ConnectivityResult? result) {
     if (result == ConnectivityResult.none) {
       saveConectivity(false);
+      return;
     } else if (result == ConnectivityResult.mobile ||
         result == ConnectivityResult.wifi) {
       saveConectivity(true);
+      return;
     }
     saveConectivity(false);
   }
