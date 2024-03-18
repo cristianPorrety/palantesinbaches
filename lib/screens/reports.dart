@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
+import 'package:pilasconelhueco/repository/dataservice.dart';
+import 'package:pilasconelhueco/repository/restoperations.dart';
+import 'package:pilasconelhueco/shared/service_locator.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
 import '../models/Report.dart';
 
@@ -40,25 +43,30 @@ class Reports extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: DataTable(
+        child: FutureBuilder(
+          future: getit<DataService>().getReports(), 
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+            return DataTable(
           columnSpacing: 30.0,
           columns: [
             DataColumn(label: Text('Mis Reportes', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
             DataColumn(label: Text('Fecha y Hora', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
             DataColumn(label: Text('Info', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
-            DataColumn(label: Text('Estado', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
           ],
-          rows: reports.map((report) => DataRow(
+          rows: snapshot.data!.map((report) => DataRow(
             cells: [
               DataCell(
                 Text(
-                  report.name,
+                  report.name!,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               DataCell(
                 Text(
-                  report!.dateTime,
+                  report.reportDate!,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -122,15 +130,11 @@ class Reports extends StatelessWidget {
                   child: Icon(Icons.info, color: ColorsPalet.primaryColor),
                 ),
               ),
-              DataCell(
-                Text(
-                  report!.estado,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
             ],
           )).toList(),
-        ),
+        );
+          },
+        )
       ),
     );
   }

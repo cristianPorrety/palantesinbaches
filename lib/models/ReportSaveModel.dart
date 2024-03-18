@@ -39,8 +39,9 @@ class ConfirmDataModel {
       'motive': motive,
       'observation': observation,
       'reportDate': reportDate,
-      'latitude': latitude,
-      'longitude': longitude,
+      'latitude': "latitude",
+      'longitude': "longitude",
+      "reportId": reportId,
       'deviceId': deviceId,
       'deviceFamily': deviceFamily,
       'currentReportLatitude': currentReportLatitude,
@@ -57,6 +58,7 @@ class ConfirmDataModel {
     confirmData.address = map['address'];
     confirmData.motive = map['motive'];
     confirmData.observation = map['observation'];
+    confirmData.reportId = map["reportId"];
     confirmData.reportDate = map['reportDate'];
     confirmData.latitude = map['latitude'];
     confirmData.longitude = map['longitude'];

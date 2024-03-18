@@ -20,7 +20,6 @@ class _DataScreenState extends State<DataScreen> {
   TextEditingController nombreController = TextEditingController();
   TextEditingController celularController = TextEditingController();
   TextEditingController correoElectronicoController = TextEditingController();
-  TextEditingController generoController = TextEditingController();
 
   String nombreText = "";
   String celularText = "";
@@ -28,7 +27,7 @@ class _DataScreenState extends State<DataScreen> {
   String generoText = "";
 
   int? currentAge;
-  DateTime? selectedDate; // Variable para almacenar la fecha seleccionada
+  DateTime? selectedDate;
 
   FocusNode nombreFocus = FocusNode();
   FocusNode celularFocus = FocusNode();
@@ -43,7 +42,8 @@ class _DataScreenState extends State<DataScreen> {
   String generoErrorMessage = '';
   String edadErrorMessage = '';
   TextEditingController edadController = TextEditingController();
-
+  List<String> generoOptions = ["Masculino", "Femenino", "Otro"];
+  String? selectedGenero;
   @override
   void initState() {
     super.initState();
@@ -136,7 +136,7 @@ class _DataScreenState extends State<DataScreen> {
             _buildListTile("Nombre", nombreController, nombreErrorMessage, nombreFocus, nombreText),
             _buildListTile("Celular", celularController, celErrorMessage, celularFocus, celularText),
             _buildListTile("Correo electrónico", correoElectronicoController, correoErrorMessage, correoFocus, correoElectronicoText),
-            _buildListTile("Genero", generoController, generoErrorMessage, generoFocus, generoText),
+            _buildGeneroDropdown(),
             _buildDateSelectorTile("Edad"),
             if (isEditing)
               Padding(
@@ -164,10 +164,14 @@ class _DataScreenState extends State<DataScreen> {
                     ElevatedButton(
                       onPressed: () {
                         if (_allErrorMessagesAreEmpty()) {
-                          setState(() {
-                            isEditing = false;
-                          });
-                          usuarioCubit.createOrUpdateDataInfo(UsuarioReport(nombre: nombreController.text, celular: celularController.text, correoElectronico: correoElectronicoController.text, edad: currentAge, genero: generoController.text));
+                          if (celularController.text.length >= 10) {
+                            setState(() {
+                              isEditing = false;
+                            });
+                            usuarioCubit.createOrUpdateDataInfo(UsuarioReport(nombre: nombreController.text, celular: celularController.text, correoElectronico: correoElectronicoController.text, edad: currentAge,   genero: selectedGenero,));
+                          } else {
+                            ToastManager.showToast(context, "Por favor, verifique que los datos ingresados sean correctos.");
+                          }
                         } else {
                           ToastManager.showToast(context, "Por favor, verifique que los datos ingresados sean correctos.");
                         }
@@ -182,6 +186,7 @@ class _DataScreenState extends State<DataScreen> {
                         ),
                       ),
                     ),
+
                   ],
                 ),
               ),
@@ -200,64 +205,68 @@ class _DataScreenState extends State<DataScreen> {
           ? Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-            TextField(
-              controller: controller,
-              focusNode: focusNode,
-              style: TextStyle(fontSize: 16.0),
-              keyboardType:
-              title == "Celular" || title == "Edad" ? TextInputType.number : null,
-              onChanged: (value) {
-                setState(() {
-                  if (title == "Nombre") {
-                    nombreText = value;
-                    if (!_isTextValid(value)) {
-                      nombreErrorMessage = 'Solo se permiten letras.';
-                    } else {
-                      nombreErrorMessage = '';
-                    }
-                  } else if (title == "Celular") {
+          TextField(
+            controller: controller,
+            focusNode: focusNode,
+            style: TextStyle(fontSize: 16.0),
+            keyboardType: title == "Celular" || title == "Edad" ? TextInputType.number : null,
+            onChanged: (value) {
+              setState(() {
+                if (title == "Nombre") {
+                  nombreText = value;
+                  if (!_isTextValid(value)) {
+                    nombreErrorMessage = 'Solo se admite texto.';
+                  } else {
+                    nombreErrorMessage = '';
+                  }
+                } else if (title == "Celular") {
+                  if (value.length <= 10) {
                     celularText = value;
                     if (!_isTextValid2(value)) {
-                      celErrorMessage = 'Solo se permiten números.';
+                      celErrorMessage = 'Solo se admite número.';
                     } else {
                       celErrorMessage = '';
                     }
-                  } else if (title == "Correo electrónico") {
-                    correoElectronicoText = value;
-                    if (!_isEmailValid(value)) {
-                      correoErrorMessage = 'Formato de correo no válido';
-                    } else {
-                      correoErrorMessage = '';
-                    }
-                  } else if (title == "Genero") {
-                    generoText = value;
-                    if (!_isTextValid3(value)) {
-                      generoErrorMessage = 'Solo se permiten letras.';
-                    } else {
-                      generoErrorMessage = '';
-                    }
+                  } else {
+                    celularText = value.substring(0, 10);
                   }
-                });
-              },
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.grey[200],
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(
-                    color: errorMessage.isNotEmpty ? Colors.red : Colors.transparent,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(color: ColorsPalet.primaryColor),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(color: Colors.red),
+                } else if (title == "Correo electrónico") {
+                  correoElectronicoText = value;
+                  if (!_isEmailValid(value)) {
+                    correoErrorMessage = 'Formato de correo no válido';
+                  } else {
+                    correoErrorMessage = '';
+                  }
+                } else if (title == "Genero") {
+                  generoText = value;
+                  if (!_isTextValid3(value)) {
+                    generoErrorMessage = 'Solo se admite texto.';
+                  } else {
+                    generoErrorMessage = '';
+                  }
+                }
+              });
+            },
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.grey[200],
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(
+                  color: errorMessage.isNotEmpty ? Colors.red : Colors.transparent,
                 ),
               ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(color: ColorsPalet.primaryColor),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(color: Colors.red),
+              ),
             ),
+          ),
+
           if (errorMessage.isNotEmpty)
             Row(
               children: [
@@ -276,9 +285,53 @@ class _DataScreenState extends State<DataScreen> {
         ],
       )
           : Text(controller.text),
-      trailing: null, // Eliminar completamente el icono de edición
+      trailing: null,
     );
   }
+  Widget _buildGeneroDropdown() {
+    return ListTile(
+      title: Text("Género", style: TextStyle(fontWeight: FontWeight.bold)),
+      subtitle: isEditing
+          ? Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.grey[200], // Color de fondo
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.0),
+              spreadRadius: 2,
+              blurRadius: 1,
+              offset: Offset(0, 0),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: DropdownButtonFormField<String>(
+            value: selectedGenero,
+            items: generoOptions.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedGenero = newValue;
+              });
+            },
+            decoration: InputDecoration(
+              border: InputBorder.none,
+            ),
+          ),
+        ),
+      )
+          : Text(
+        selectedGenero ?? '',
+      ),
+    );
+  }
+
 
 
   Widget _buildDateSelectorTile(String title) {
@@ -297,16 +350,14 @@ class _DataScreenState extends State<DataScreen> {
               child: Row(
                 children: [
                   Icon(
-                    Icons.calendar_today,
-                    color: Colors.grey,
-                    size: 20,
+                    Icons.calendar_month,
+                    color: ColorsPalet.primaryColor,
+                    size: 30,
                   ),
                   SizedBox(width: 10),
                   Text(
-                    // Mostrar la fecha seleccionada si está disponible, de lo contrario, mostrar "Seleccione una fecha"
-                    currentAge != null
-                        // ignore: unnecessary_string_interpolations
-                        ? "${currentAge}"
+                    selectedDate != null
+                        ? "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}"
                         : "Seleccione una fecha",
                     style: TextStyle(fontSize: 16),
                   ),
@@ -320,7 +371,7 @@ class _DataScreenState extends State<DataScreen> {
       : Text(selectedDate != null
           ? _calculateAgeFromDate(selectedDate)
           : ""),
-      trailing: null, // Eliminar completamente el icono de edición
+      trailing: null,
     );
   }
 

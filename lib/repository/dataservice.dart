@@ -6,20 +6,25 @@ import 'package:pilasconelhueco/models/ReportSaveModel.dart';
 import 'package:pilasconelhueco/repository/databasemanager.dart';
 import 'package:pilasconelhueco/repository/restoperations.dart';
 import 'package:pilasconelhueco/shared/service_locator.dart';
+import 'package:pilasconelhueco/util/device_info.dart';
 
 class DataService {
 
   Future<List<ConfirmDataModel>> getReports() async {
+    var deviceId = await DeviceInfoManager.getDeviceId();
+    var deviceIdModel = {"deviceId": deviceId};
+    print("device id: $deviceIdModel");
     if(!getit<ConectivityCubit>().state.connected!){
       return getit<DatabaseManipulator>().getReports();
     }
 
-    var reports = await getit<RestOperations>().getReports();
+    var reports = await getit<RestOperations>().getReports(deviceIdModel);
+    print("reports obtained: $reports");
     if(reports.isNotEmpty && !reports[0].loaded!) {
       return getit<DatabaseManipulator>().getReports();
     }
 
-    return getit<RestOperations>().getReports();
+    return reports;
 
   }
 

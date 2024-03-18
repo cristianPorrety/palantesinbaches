@@ -79,10 +79,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         getCurrentLocation.then((value) {
           datamodel?.currentReportLatitude = value!.latitude.toString();
           datamodel?.currentReportLongitude = value!.longitude.toString();
-          setState(() {
-            _isLoading = false;
-          });
-          print("el device: ${getit<ConectivityCubit>().state.connected!}");
+          print("conectivity status before post: ${getit<ConectivityCubit>().state.connected!}");
           if(getit<ConectivityCubit>().state.connected!) {
             getit<DataService>().postReport(datamodel!).then((value) => _Dialog_finalizar(context));
           }
@@ -433,6 +430,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                   dataModelSecondScreen.evidences = filesSelected;
                   dataModelSecondScreen.motive = selectedOption;
                   dataModelSecondScreen.reportDate = DateTime.now().toString();
+                  dataModelSecondScreen.reportId = const Uuid().v4().toUpperCase();
                   datamodel = dataModelSecondScreen;
                   index++;
                 });
@@ -462,7 +460,6 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   }
 
   void _Dialog_finalizar(BuildContext context) {
-    String uniqueId = Uuid().v4().toUpperCase();
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -496,16 +493,6 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                       ),
                     ),
                     SizedBox(height: 10.0),
-                    Center(
-                      child: Text(
-                        "Número de reporte: RE${uniqueId.substring(uniqueId.length - 11)}",
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black45,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
