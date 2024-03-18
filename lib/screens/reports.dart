@@ -47,7 +47,14 @@ class Reports extends StatelessWidget {
           future: getit<DataService>().getReports(), 
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 180),
+                child: Center(
+                  child: SizedBox(
+                      child: CircularProgressIndicator()
+                  ),
+                ),
+              );
             }
             return DataTable(
           columnSpacing: 30.0,
@@ -88,11 +95,10 @@ class Reports extends StatelessWidget {
                             width: 400,
                             height: 200,
                             padding: EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: ListView(
                               children: [
                                 Text("Ubicación:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
-                                Text("Carrera 9, Calle 15, Avenida Libertador", style: TextStyle(fontSize: 15, )),
+                                Text(report.address!, style: TextStyle(fontSize: 15, )),
                                 SizedBox(height: 10),
                                 Row(
                                   children: [
@@ -104,14 +110,14 @@ class Reports extends StatelessWidget {
                                 ),
                                 Row(
                                   children: [
-                                    Text("Envejecimiento"),
+                                    Text(report.motive!),
                                     SizedBox(width: 40),
-                                    Text("26-10-2023"),
+                                    Expanded(child: Text(report.reportDate!)),
                                   ],
                                 ),
                                 SizedBox(height: 10),
                                 Text("Observación:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
-                                Text("Hueco en la vía que ha provocado varios accidentes."),
+                                Text(report.observation!),
                               ],
                             ),
                           ),

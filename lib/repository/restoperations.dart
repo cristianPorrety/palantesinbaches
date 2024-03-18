@@ -2,6 +2,7 @@
 
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:pilasconelhueco/bloc/conectivity_bloc.dart';
@@ -16,22 +17,30 @@ class RestOperations {
     try {
       Response response = await dio.get('$backendHost/reports', data: deviceId).timeout(const Duration(seconds: 4));
       print("code obtained in post: ${response.statusCode}");
-      print("code obtained in post: ${response.data}");
+      //(response.data["data"] as List);
+      print("code obtained in post: ${jsonDecode(response.data as String)}");
       if(response.statusCode != 200) {
         return [ConfirmDataModel()..loaded = false];
       }
-      List<Map<String, dynamic>> dataInRaw = response.data as List<Map<String, dynamic>>;
-      print(dataInRaw);
-      List<ConfirmDataModel> confirmData = dataInRaw.map((e) => ConfirmDataModel.fromMap(e)).toList();
+      //print(dataInRaw);
+      List<dynamic> jsonList = jsonDecode(response.data as String);
+      List<Map<String, dynamic>> listOfMaps = jsonList.map((jsonObject) {
+        return Map<String, dynamic>.from(jsonObject); // Convert each element into a Map<String, dynamic>
+      }).toList();
+      List<ConfirmDataModel> confirmData = (listOfMaps).map((e) => ConfirmDataModel.fromMap(e)).toList();
       print(confirmData);
       return confirmData;
     } on TimeoutException catch (_) {
       print(_);
       return [ConfirmDataModel()..loaded = false];
+    } on DioException catch (dx) {
+      print(dx);
+      return [ConfirmDataModel()..loaded = false];
     } on Exception catch(ex) {
       print(ex);
       return [ConfirmDataModel()..loaded = false];
     }
+    return [ConfirmDataModel()..loaded = false];
   }
 
   Future<bool> postReport(ConfirmDataModel dataModel) async{

@@ -52,21 +52,21 @@ class ConfirmDataModel {
   factory ConfirmDataModel.fromMap(Map<String, dynamic> map) {
     final confirmData = ConfirmDataModel();
     confirmData.id = map['id'];
-    confirmData.name = map['name'];
+    confirmData.name = map['reported_by'];
     confirmData.cellphone = map['cellphone'];
     confirmData.email = map['email'];
     confirmData.address = map['address'];
     confirmData.motive = map['motive'];
     confirmData.observation = map['observation'];
-    confirmData.reportId = map["reportId"];
-    confirmData.reportDate = map['reportDate'];
+    confirmData.reportId = map["report_id"];
+    confirmData.reportDate = map['report_date'];
     confirmData.latitude = map['latitude'];
     confirmData.longitude = map['longitude'];
     confirmData.loaded = true;
-    confirmData.deviceId = map['deviceId'];
-    confirmData.deviceFamily = map['deviceFamily'];
-    confirmData.currentReportLatitude = map['currentReportLatitude'];
-    confirmData.currentReportLongitude = map['currentReportLongitude'];
+    confirmData.deviceId = map['device_id'];
+    confirmData.deviceFamily = map['device_family'];
+    confirmData.currentReportLatitude = map['current_report_latitude'];
+    confirmData.currentReportLongitude = map['current_report_longitude'];
     return confirmData;
   }
 
