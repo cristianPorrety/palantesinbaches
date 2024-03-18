@@ -40,7 +40,8 @@ class DatabaseManipulator {
         'onServer INTEGER, '
         'deviceId TEXT, '
         'deviceFamily TEXT, '
-        'currentReportLocation TEXT)',
+        'currentReportLatitude TEXT, '
+        'currentReportLongitude TEXT)',
       );
       await database.execute(
         'CREATE TABLE usuario_report('

@@ -29,6 +29,7 @@ class RestOperations {
   }
 
   Future<bool> postReport(ConfirmDataModel dataModel) async{
+    print("on perform post");
     try {Response response = await dio.post('https://jsonplaceholder.typicode.com/', data: dataModel.toMap()).timeout(const Duration(seconds: 4));
     print("code obtained in post: ${response.statusCode}");
     if(response.statusCode != 200) {

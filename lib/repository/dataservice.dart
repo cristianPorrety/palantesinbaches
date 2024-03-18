@@ -24,7 +24,7 @@ class DataService {
   }
 
   Future<bool> postReport(ConfirmDataModel dataModel) async {
-    if(getit<ConectivityCubit>().state.connected!) {
+    if(!getit<ConectivityCubit>().state.connected!) {
       print("no está conectado");
       getit<DatabaseManipulator>().createReport(dataModel);
       return true;

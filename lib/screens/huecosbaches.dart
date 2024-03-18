@@ -82,6 +82,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
           setState(() {
             _isLoading = false;
           });
+          print("el device: ${getit<ConectivityCubit>().state.connected!}");
           if(getit<ConectivityCubit>().state.connected!) {
             getit<DataService>().postReport(datamodel!).then((value) => _Dialog_finalizar(context));
           }
