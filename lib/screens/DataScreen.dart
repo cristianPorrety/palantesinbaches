@@ -327,7 +327,7 @@ class _DataScreenState extends State<DataScreen> {
         ),
       )
           : Text(
-        selectedGenero ?? '',
+        generoText ?? '',
       ),
     );
   }
@@ -357,7 +357,7 @@ class _DataScreenState extends State<DataScreen> {
                   SizedBox(width: 10),
                   Text(
                     selectedDate != null
-                        ? "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}"
+                        ? "${_calculateAgeFromDate(selectedDate!)}"
                         : "Seleccione una fecha",
                     style: TextStyle(fontSize: 16),
                   ),
@@ -368,9 +368,8 @@ class _DataScreenState extends State<DataScreen> {
         ],
       )
       // Si no está editando, mostrar la edad en lugar de la fecha
-      : Text(selectedDate != null
-          ? _calculateAgeFromDate(selectedDate)
-          : ""),
+      : Text( currentAge != null
+        ? currentAge.toString() : ""),
       trailing: null,
     );
   }

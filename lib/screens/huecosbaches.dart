@@ -80,9 +80,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
           datamodel?.currentReportLatitude = value!.latitude.toString();
           datamodel?.currentReportLongitude = value!.longitude.toString();
           print("conectivity status before post: ${getit<ConectivityCubit>().state.connected!}");
-          if(getit<ConectivityCubit>().state.connected!) {
-            getit<DataService>().postReport(datamodel!).then((value) => _Dialog_finalizar(context));
-          }
+          getit<DataService>().postReport(datamodel!).then((value) => _Dialog_finalizar(context));
+
         });
       },
     );
@@ -430,7 +429,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                   dataModelSecondScreen.evidences = filesSelected;
                   dataModelSecondScreen.motive = selectedOption;
                   dataModelSecondScreen.reportDate = DateTime.now().toString();
-                  dataModelSecondScreen.reportId = const Uuid().v4().toUpperCase();
+                  String uuid = Uuid().v4().toUpperCase();
+                  dataModelSecondScreen.reportId = "RE${uuid.substring(uuid.length - 11)}";
                   datamodel = dataModelSecondScreen;
                   index++;
                 });
@@ -493,6 +493,17 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                       ),
                     ),
                     SizedBox(height: 10.0),
+                    getit<ConectivityCubit>().state.connected! ?
+                    Center(
+                      child: Text(
+                        "Número de reporte: ${datamodel!.reportId}",
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black45,
+                        ),
+                      ),
+                    ) : SizedBox()
                   ],
                 ),
               ),

@@ -26,26 +26,88 @@ class ConfirmDataModel {
   int? onServer;
   List<File>? evidences;
 
-  ConfirmDataModel();
+  ConfirmDataModel({
+    this.id,
+    this.name,
+    this.cellphone,
+    this.email,
+    this.address,
+    this.motive,
+    this.reportId,
+    this.observation,
+    this.reportDate,
+    this.latitude,
+    this.longitude,
+    this.deviceId,
+    this.deviceFamily,
+    this.currentReportLatitude,
+    this.currentReportLongitude,
+    this.loaded,
+    this.onServer,
+    this.evidences,
+  });
+
+  ConfirmDataModel copyOf({
+    int? id,
+    String? name,
+    String? cellphone,
+    String? email,
+    String? address,
+    String? motive,
+    String? reportId,
+    String? observation,
+    String? reportDate,
+    String? latitude,
+    String? longitude,
+    String? deviceId,
+    String? deviceFamily,
+    String? currentReportLatitude,
+    String? currentReportLongitude,
+    bool? loaded,
+    int? onServer,
+    List<File>? evidences,
+  }) {
+    return ConfirmDataModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      cellphone: cellphone ?? this.cellphone,
+      email: email ?? this.email,
+      address: address ?? this.address,
+      motive: motive ?? this.motive,
+      reportId: reportId ?? this.reportId,
+      observation: observation ?? this.observation,
+      reportDate: reportDate ?? this.reportDate,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      deviceId: deviceId ?? this.deviceId,
+      deviceFamily: deviceFamily ?? this.deviceFamily,
+      currentReportLatitude: currentReportLatitude ?? this.currentReportLatitude,
+      currentReportLongitude: currentReportLongitude ?? this.currentReportLongitude,
+      loaded: loaded ?? this.loaded,
+      onServer: onServer ?? this.onServer,
+      evidences: evidences ?? this.evidences,
+    );
+  }
 
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
-      'name': name,
+      'reported_by': name,
       'cellphone': cellphone,
       'email': email,
       'address': address,
       'motive': motive,
       'observation': observation,
-      'reportDate': reportDate,
+      'report_date': reportDate,
       'latitude': "latitude",
       'longitude': "longitude",
-      "reportId": reportId,
-      'deviceId': deviceId,
-      'deviceFamily': deviceFamily,
-      'currentReportLatitude': currentReportLatitude,
-      'currentReportLongitude': currentReportLongitude,
+      "report_id": reportId,
+      'device_id': deviceId,
+      'device_family': deviceFamily,
+      'onServer': onServer,
+      'current_report_latitude': currentReportLatitude,
+      'current_report_longitude': currentReportLongitude,
     };
   }
 
@@ -65,6 +127,7 @@ class ConfirmDataModel {
     confirmData.loaded = true;
     confirmData.deviceId = map['device_id'];
     confirmData.deviceFamily = map['device_family'];
+    confirmData.onServer = map['onServer'];
     confirmData.currentReportLatitude = map['current_report_latitude'];
     confirmData.currentReportLongitude = map['current_report_longitude'];
     return confirmData;

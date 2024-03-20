@@ -28,20 +28,21 @@ class DatabaseManipulator {
          await database.execute( 
            'CREATE TABLE confirm_data('
         'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-        'name TEXT, '
+        'reported_by TEXT, '
         'cellphone TEXT, '
         'email TEXT, '
         'address TEXT, '
         'motive TEXT, '
         'observation TEXT, '
-        'reportDate TEXT, '
+        'report_date TEXT, '
         'latitude TEXT, '
         'longitude TEXT, '
         'onServer INTEGER, '
-        'deviceId TEXT, '
-        'deviceFamily TEXT, '
-        'currentReportLatitude TEXT, '
-        'currentReportLongitude TEXT)',
+        'device_id TEXT, '
+        'report_id TEXT, '
+        'device_family TEXT, '
+        'current_report_latitude TEXT, '
+        'current_report_longitude TEXT)',
       );
       await database.execute(
         'CREATE TABLE usuario_report('
@@ -93,7 +94,7 @@ class DatabaseManipulator {
 
 
   Future<void> createReport(ConfirmDataModel user) async {
-    user.onServer = 0;
+    print("report to be saved : ${user.toMap()}");
     await db.insert(
       'confirm_data', user.toMap(), 
       conflictAlgorithm: ConflictAlgorithm.replace);   
@@ -120,6 +121,14 @@ class DatabaseManipulator {
   Future<bool> thereIsReports() async{
     final List<Map<String, Object?>> queryResult = 
       await db.query('confirm_data', where: 'onServer = 0');
+    print("there is reports: $queryResult");
+    return queryResult.isNotEmpty;
+  }
+
+  Future<bool> thereAreReport(String reportId) async{
+    final List<Map<String, Object?>> queryResult =
+    await db.query('confirm_data', where: 'report_id = ?', whereArgs: [reportId]);
+    print("there is reports: $queryResult");
     return queryResult.isNotEmpty;
   }
 

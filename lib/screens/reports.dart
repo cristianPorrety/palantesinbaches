@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/repository/dataservice.dart';
@@ -42,104 +43,105 @@ class Reports extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: FutureBuilder(
-          future: getit<DataService>().getReports(), 
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 180),
-                child: Center(
-                  child: SizedBox(
-                      child: CircularProgressIndicator()
+        scrollDirection: Axis.vertical,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: FutureBuilder(
+            future: getit<DataService>().getReports(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 180),
+                  child: Center(
+                    child: SizedBox(
+                        child: CircularProgressIndicator()
+                    ),
+                  ),
+                );
+              }
+              return DataTable(
+            columnSpacing: 30.0,
+            columns: [
+              DataColumn(label: Text('Id Reporte', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
+              DataColumn(label: Text('Mis Reportes', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
+              DataColumn(label: Text('Fecha y Hora', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
+              DataColumn(label: Text('Info', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
+            ],
+            rows: snapshot.data!.map((report) => DataRow(
+              cells: [
+                DataCell(
+                  Text(
+                    report.reportId!,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              );
-            }
-            return DataTable(
-          columnSpacing: 30.0,
-          columns: [
-            DataColumn(label: Text('Mis Reportes', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
-            DataColumn(label: Text('Fecha y Hora', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
-            DataColumn(label: Text('Info', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
-          ],
-          rows: snapshot.data!.map((report) => DataRow(
-            cells: [
-              DataCell(
-                Text(
-                  report.name!,
-                  overflow: TextOverflow.ellipsis,
+                DataCell(
+                  Text(
+                    report.name!,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              DataCell(
-                Text(
-                  report.reportDate!,
-                  overflow: TextOverflow.ellipsis,
+                DataCell(
+                  Text(
+                    report.reportDate!,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              DataCell(
-                GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Column(
-                            children: [
-                              Text("Reporte número: ${report.name} ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
-                              Divider(),
-                              Text("En proceso",style: TextStyle(fontSize: 14,)),
-                            ],
-                          ),
-                          content: Container(
-                            width: 400,
-                            height: 200,
-                            padding: EdgeInsets.all(16),
-                            child: ListView(
+                DataCell(
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+
+                            title: Column(
                               children: [
-                                Text("Ubicación:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
-                                Text(report.address!, style: TextStyle(fontSize: 15, )),
-                                SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Text("Motivo:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
-                                    SizedBox(width: 90),
-                                    Text("Fecha:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
-                                    SizedBox(height: 10),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(report.motive!),
-                                    SizedBox(width: 40),
-                                    Expanded(child: Text(report.reportDate!)),
-                                  ],
-                                ),
-                                SizedBox(height: 10),
-                                Text("Observación:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
-                                Text(report.observation!),
+                                Text("Reporte número: ${report.name} ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
+                                Divider(),
+                                Text("En proceso",style: TextStyle(fontSize: 14,)),
                               ],
                             ),
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text("Cerrar",style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
+                            content: Container(
+                              width: 400,
+                              height: 300,
+                              padding: EdgeInsets.all(16),
+                              child: ListView(
+                                children: [
+                                  Text("Ubicación:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
+                                  Text(report.address!, style: TextStyle(fontSize: 15, )),
+                                  SizedBox(height: 10),
+                                  Text("Motivo:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
+                                  Text(report.motive!),
+                                  SizedBox(height: 10),
+                                  Text("Fecha:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
+                                  Text(report.reportDate!.substring(0, 19)),
+                                  SizedBox(height: 10),
+                                  Text("Observación:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
+                                  Text(report.observation!),
+                                ],
+                              ),
                             ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  child: Icon(Icons.info, color: ColorsPalet.primaryColor),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text("Cerrar",style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: Icon(Icons.info, color: ColorsPalet.primaryColor),
+                  ),
                 ),
-              ),
-            ],
-          )).toList(),
-        );
-          },
+              ],
+            )).toList(),
+          );
+            },
+          ),
         )
       ),
     );
