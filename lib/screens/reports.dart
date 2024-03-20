@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/repository/dataservice.dart';
 import 'package:pilasconelhueco/repository/restoperations.dart';
@@ -102,17 +104,17 @@ class Reports extends StatelessWidget {
                                 SizedBox(height: 10),
                                 Row(
                                   children: [
-                                    Text("Motivo:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
+                                    Expanded(child: Text("Motivo:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor))),
                                     SizedBox(width: 90),
-                                    Text("Fecha:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
+                                    Expanded(child: Text("Fecha:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor))),
                                     SizedBox(height: 10),
                                   ],
                                 ),
                                 Row(
                                   children: [
-                                    Text(report.motive!),
+                                    Expanded(child: Text(report.motive!, style: TextStyle(fontSize: 13),)),
                                     SizedBox(width: 40),
-                                    Expanded(child: Text(report.reportDate!)),
+                                    Expanded(child: Text(report.reportDate!.substring(0, 19))),
                                   ],
                                 ),
                                 SizedBox(height: 10),
