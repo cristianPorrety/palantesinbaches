@@ -51,6 +51,7 @@ class DatabaseManipulator {
         'celular TEXT, '
         'correoElectronico TEXT, '
         'genero TEXT, '
+        'fechaNacimiento TEXT, '
         'edad INTEGER)',
       );
      },
@@ -85,6 +86,7 @@ class DatabaseManipulator {
   void _updateUser(UsuarioReport user) async {
     UsuarioReport currentUsuarioReportId = await getItems();
     print(currentUsuarioReportId.toString());
+    user.id = currentUsuarioReportId.id;
     await db.update(
         "usuario_report",
         user.toMap(),

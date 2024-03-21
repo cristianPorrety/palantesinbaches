@@ -64,7 +64,7 @@ class Reports extends StatelessWidget {
             columnSpacing: 30.0,
             columns: [
               DataColumn(label: Text('Id Reporte', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
-              DataColumn(label: Text('Mis Reportes', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
+              DataColumn(label: Text('Reportado por', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
               DataColumn(label: Text('Fecha y Hora', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
               DataColumn(label: Text('Info', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
             ],
@@ -95,33 +95,10 @@ class Reports extends StatelessWidget {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-
                             title: Column(
                               children: [
-                                Text("Reporte número: ${report.name} ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
+                                Text("Reporte: ${report.reportId} ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
                                 Divider(),
-                                Text("En proceso",style: TextStyle(fontSize: 14,)),
-                                Text("Ubicación:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
-                                Text(report.address!, style: TextStyle(fontSize: 15, )),
-                                SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Expanded(child: Text("Motivo:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor))),
-                                    SizedBox(width: 90),
-                                    Expanded(child: Text("Fecha:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor))),
-                                    SizedBox(height: 10),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(child: Text(report.motive!, style: TextStyle(fontSize: 13),)),
-                                    SizedBox(width: 40),
-                                    Expanded(child: Text(report.reportDate!.substring(0, 19))),
-                                  ],
-                                ),
-                                SizedBox(height: 10),
-                                Text("Observación:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: ColorsPalet.primaryColor)),
-                                Text(report.observation!),
                               ],
                             ),
                             content: Container(

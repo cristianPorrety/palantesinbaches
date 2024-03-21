@@ -27,7 +27,7 @@ class DataService {
       return reportsLocal.map((e) => e.copyOf(reportId: e.onServer == 0 ? "pendiente" : e.reportId)).toList();
     }
 
-    saveReportsFromRemote(List.of(reports));
+    await saveReportsFromRemote(List.of(reports));
 
     var reportsLocal = await getit<DatabaseManipulator>().getReports();
     return reportsLocal.map((e) => e.copyOf(reportId: e.onServer == 0 ? "pendiente" : e.reportId)).toList();

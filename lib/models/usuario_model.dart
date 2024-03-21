@@ -8,6 +8,7 @@ class UsuarioReport {
   String? celular;
   String? correoElectronico;
   String? genero;
+  String? fechaNacimiento;
   int? edad;
   UsuarioReport({
     this.id,
@@ -15,6 +16,7 @@ class UsuarioReport {
     this.celular,
     this.correoElectronico,
     this.genero,
+    this.fechaNacimiento,
     this.edad,
   });
 
@@ -25,6 +27,7 @@ class UsuarioReport {
     String? celular,
     String? correoElectronico,
     String? genero,
+    String? fechaNacimiento,
     int? edad,
   }) {
     return UsuarioReport(
@@ -33,16 +36,19 @@ class UsuarioReport {
       celular: celular ?? this.celular,
       correoElectronico: correoElectronico ?? this.correoElectronico,
       genero: genero ?? this.genero,
+      fechaNacimiento: fechaNacimiento ?? this.fechaNacimiento,
       edad: edad ?? this.edad,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'nombre': nombre,
       'celular': celular,
       'correoElectronico': correoElectronico,
       'genero': genero,
+      'fechaNacimiento': fechaNacimiento,
       'edad': edad,
     };
   }
@@ -54,6 +60,7 @@ class UsuarioReport {
       celular: map['celular'] != null ? map['celular'] as String : null,
       correoElectronico: map['correoElectronico'] != null ? map['correoElectronico'] as String : null,
       genero: map['genero'] != null ? map['genero'] as String : null,
+      fechaNacimiento: map['fechaNacimiento'] != null ? map['fechaNacimiento'] as String : null,
       edad: map['edad'] != null ? map['edad'] as int : null,
     );
   }
@@ -64,7 +71,7 @@ class UsuarioReport {
 
   @override
   String toString() {
-    return 'UsuarioReport(id: $id, nombre: $nombre, celular: $celular, correoElectronico: $correoElectronico, genero: $genero, edad: $edad)';
+    return 'UsuarioReport(id: $id, nombre: $nombre, celular: $celular, correoElectronico: $correoElectronico, genero: $genero, fechaNacimiento: $fechaNacimiento, edad: $edad)';
   }
 
   @override
@@ -77,6 +84,7 @@ class UsuarioReport {
       other.celular == celular &&
       other.correoElectronico == correoElectronico &&
       other.genero == genero &&
+      other.fechaNacimiento == fechaNacimiento &&
       other.edad == edad;
   }
 
@@ -87,6 +95,7 @@ class UsuarioReport {
       celular.hashCode ^
       correoElectronico.hashCode ^
       genero.hashCode ^
+      fechaNacimiento.hashCode ^
       edad.hashCode;
   }
 }

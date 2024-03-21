@@ -21,11 +21,11 @@ class _DataScreenState extends State<DataScreen> {
   TextEditingController celularController = TextEditingController();
   TextEditingController correoElectronicoController = TextEditingController();
 
-  String nombreText = "";
   String celularText = "";
+  String nombreText = "";
   String correoElectronicoText = "";
   String generoText = "";
-
+  String currentDate = "";
   int? currentAge;
   DateTime? selectedDate;
 
@@ -42,8 +42,8 @@ class _DataScreenState extends State<DataScreen> {
   String generoErrorMessage = '';
   String edadErrorMessage = '';
   TextEditingController edadController = TextEditingController();
-  List<String> generoOptions = ["Masculino", "Femenino", "Otro"];
-  String? selectedGenero;
+  List<String> generoOptions = ["Masculino", "Femenino", "Otro", ""];
+  String selectedGenero = "";
   @override
   void initState() {
     super.initState();
@@ -51,8 +51,11 @@ class _DataScreenState extends State<DataScreen> {
       nombreText = getit<UsuarioCubit>().state.nombre ?? "";
       celularText = getit<UsuarioCubit>().state.celular ?? "";
       correoElectronicoText = getit<UsuarioCubit>().state.correoElectronico ?? "";
-      generoText = getit<UsuarioCubit>().state.genero ?? "";
+      selectedGenero = getit<UsuarioCubit>().state.genero ?? "";
       currentAge = getit<UsuarioCubit>().state.edad;
+      currentDate = getit<UsuarioCubit>().state.fechaNacimiento ?? "";
+      var dateSplitted = currentDate.split("/");
+      selectedDate = currentDate.isNotEmpty ? DateTime(int.parse(dateSplitted[2]), int.parse(dateSplitted[1]), int.parse(dateSplitted[0])) : null;
     });
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       print("on net change test: $result");
@@ -137,7 +140,9 @@ class _DataScreenState extends State<DataScreen> {
             _buildListTile("Celular", celularController, celErrorMessage, celularFocus, celularText),
             _buildListTile("Correo electrónico", correoElectronicoController, correoErrorMessage, correoFocus, correoElectronicoText),
             _buildGeneroDropdown(),
-            _buildDateSelectorTile("Edad"),
+            _buildDateSelectorTile("Fecha de nacimiento"),
+            _buildAgeListTile("Edad"),
+
             if (isEditing)
               Padding(
                 padding: EdgeInsets.only(top: 20.0),
@@ -168,7 +173,7 @@ class _DataScreenState extends State<DataScreen> {
                             setState(() {
                               isEditing = false;
                             });
-                            usuarioCubit.createOrUpdateDataInfo(UsuarioReport(nombre: nombreController.text, celular: celularController.text, correoElectronico: correoElectronicoController.text, edad: currentAge,   genero: selectedGenero,));
+                            usuarioCubit.createOrUpdateDataInfo(UsuarioReport(nombre: nombreController.text, celular: celularController.text, correoElectronico: correoElectronicoController.text, edad: currentAge,   genero: selectedGenero, fechaNacimiento: currentDate));
                           } else {
                             ToastManager.showToast(context, "Por favor, verifique que los datos ingresados sean correctos.");
                           }
@@ -317,7 +322,7 @@ class _DataScreenState extends State<DataScreen> {
             }).toList(),
             onChanged: (String? newValue) {
               setState(() {
-                selectedGenero = newValue;
+                selectedGenero = newValue!;
               });
             },
             decoration: InputDecoration(
@@ -327,7 +332,7 @@ class _DataScreenState extends State<DataScreen> {
         ),
       )
           : Text(
-        generoText ?? '',
+        selectedGenero ?? '',
       ),
     );
   }
@@ -356,8 +361,8 @@ class _DataScreenState extends State<DataScreen> {
                   ),
                   SizedBox(width: 10),
                   Text(
-                    selectedDate != null
-                        ? "${_calculateAgeFromDate(selectedDate!)}"
+                    currentDate.isNotEmpty
+                        ? currentDate
                         : "Seleccione una fecha",
                     style: TextStyle(fontSize: 16),
                   ),
@@ -368,8 +373,17 @@ class _DataScreenState extends State<DataScreen> {
         ],
       )
       // Si no está editando, mostrar la edad en lugar de la fecha
-      : Text( currentAge != null
-        ? currentAge.toString() : ""),
+      : Text( currentDate.isNotEmpty
+        ? currentDate : ""),
+      trailing: null,
+    );
+  }
+
+  Widget _buildAgeListTile(String title) {
+    return ListTile(
+      title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+      subtitle: Text( currentAge != null
+          ? currentAge.toString() : ""),
       trailing: null,
     );
   }
@@ -410,6 +424,7 @@ class _DataScreenState extends State<DataScreen> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
+        currentDate = "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}";
         edadController.text = _calculateAgeFromDate(selectedDate);
       });
     }
@@ -465,6 +480,7 @@ class _DataScreenState extends State<DataScreen> {
         celErrorMessage.isEmpty &&
         correoErrorMessage.isEmpty &&
         generoErrorMessage.isEmpty &&
-        edadErrorMessage.isEmpty;
+        edadErrorMessage.isEmpty &&
+        selectedGenero.isNotEmpty;
   }
 }
