@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:pilasconelhueco/bloc/user_bloc.dart';
 import 'package:pilasconelhueco/screens/DataScreen.dart';
@@ -16,6 +18,14 @@ class MyDrawer extends StatefulWidget {
 
 class _MyDrawerState extends State<MyDrawer> {
   String selectedItem = '';
+  late File currentFile;
+
+  @override
+  void initState() {
+    currentFile = File(getit<UsuarioCubit>().state.profilePic ?? "");
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -53,10 +63,10 @@ class _MyDrawerState extends State<MyDrawer> {
                 SizedBox(height: 30.0),
                 Center(
                   child: CircleAvatar(
-                    radius: 50.0,
-                    backgroundImage: AssetImage(
-                      'assets/img/profile.png',
-                    ),
+                    radius: 80,
+                    backgroundImage:  currentFile.existsSync()
+                        ? new FileImage(currentFile)
+                        : new AssetImage("assets/img/tittle_drawer.png") as ImageProvider,
                   ),
                 ),
                 SizedBox(height: 20.0),

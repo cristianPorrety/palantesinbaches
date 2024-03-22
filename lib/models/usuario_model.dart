@@ -2,13 +2,13 @@
 import 'dart:convert';
 
 class UsuarioReport {
-
   int? id;
   String? nombre;
   String? celular;
   String? correoElectronico;
   String? genero;
   String? fechaNacimiento;
+  String? profilePic;
   int? edad;
   UsuarioReport({
     this.id,
@@ -17,9 +17,9 @@ class UsuarioReport {
     this.correoElectronico,
     this.genero,
     this.fechaNacimiento,
+    this.profilePic,
     this.edad,
   });
-
 
   UsuarioReport copyWith({
     int? id,
@@ -28,6 +28,7 @@ class UsuarioReport {
     String? correoElectronico,
     String? genero,
     String? fechaNacimiento,
+    String? profilePic,
     int? edad,
   }) {
     return UsuarioReport(
@@ -37,6 +38,7 @@ class UsuarioReport {
       correoElectronico: correoElectronico ?? this.correoElectronico,
       genero: genero ?? this.genero,
       fechaNacimiento: fechaNacimiento ?? this.fechaNacimiento,
+      profilePic: profilePic ?? this.profilePic,
       edad: edad ?? this.edad,
     );
   }
@@ -49,6 +51,7 @@ class UsuarioReport {
       'correoElectronico': correoElectronico,
       'genero': genero,
       'fechaNacimiento': fechaNacimiento,
+      'profilePic': profilePic,
       'edad': edad,
     };
   }
@@ -58,45 +61,52 @@ class UsuarioReport {
       id: map['id'] != null ? map['id'] as int : null,
       nombre: map['nombre'] != null ? map['nombre'] as String : null,
       celular: map['celular'] != null ? map['celular'] as String : null,
-      correoElectronico: map['correoElectronico'] != null ? map['correoElectronico'] as String : null,
+      correoElectronico: map['correoElectronico'] != null
+          ? map['correoElectronico'] as String
+          : null,
       genero: map['genero'] != null ? map['genero'] as String : null,
-      fechaNacimiento: map['fechaNacimiento'] != null ? map['fechaNacimiento'] as String : null,
+      fechaNacimiento: map['fechaNacimiento'] != null
+          ? map['fechaNacimiento'] as String
+          : null,
+      profilePic:
+          map['profilePic'] != null ? map['profilePic'] as String : null,
       edad: map['edad'] != null ? map['edad'] as int : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory UsuarioReport.fromJson(String source) => UsuarioReport.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UsuarioReport.fromJson(String source) =>
+      UsuarioReport.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'UsuarioReport(id: $id, nombre: $nombre, celular: $celular, correoElectronico: $correoElectronico, genero: $genero, fechaNacimiento: $fechaNacimiento, edad: $edad)';
+    return 'UsuarioReport(id: $id, nombre: $nombre, celular: $celular, correoElectronico: $correoElectronico, genero: $genero, fechaNacimiento: $fechaNacimiento, profilePic: $profilePic, edad: $edad)';
   }
 
   @override
   bool operator ==(covariant UsuarioReport other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.id == id &&
-      other.nombre == nombre &&
-      other.celular == celular &&
-      other.correoElectronico == correoElectronico &&
-      other.genero == genero &&
-      other.fechaNacimiento == fechaNacimiento &&
-      other.edad == edad;
+
+    return other.id == id &&
+        other.nombre == nombre &&
+        other.celular == celular &&
+        other.correoElectronico == correoElectronico &&
+        other.genero == genero &&
+        other.fechaNacimiento == fechaNacimiento &&
+        other.profilePic == profilePic &&
+        other.edad == edad;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      nombre.hashCode ^
-      celular.hashCode ^
-      correoElectronico.hashCode ^
-      genero.hashCode ^
-      fechaNacimiento.hashCode ^
-      edad.hashCode;
+        nombre.hashCode ^
+        celular.hashCode ^
+        correoElectronico.hashCode ^
+        genero.hashCode ^
+        fechaNacimiento.hashCode ^
+        profilePic.hashCode ^
+        edad.hashCode;
   }
 }
-

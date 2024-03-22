@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDpYQZo3ecO8xJ1Q_qIaqqTWqokGej8kCw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>567287834916</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.pilasconelhueco</string>
+	<key>PROJECT_ID</key>
+	<string>pilasconelhueco-60b96</string>
+	<key>STORAGE_BUCKET</key>
+	<string>pilasconelhueco-60b96.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:567287834916:ios:a28b3c1cd47a30d363ebb1</string>
+</dict>
+</plist>

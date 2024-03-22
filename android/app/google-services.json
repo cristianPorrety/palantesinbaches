@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "567287834916",
+    "project_id": "pilasconelhueco-60b96",
+    "storage_bucket": "pilasconelhueco-60b96.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:567287834916:android:eb9fe0b3d49a405763ebb1",
+        "android_client_info": {
+          "package_name": "com.example.pilasconelhueco"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqPiSmL5s0JLalY8vvbrzvHYIY3nRMtVg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
