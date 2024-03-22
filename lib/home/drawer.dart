@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pilasconelhueco/bloc/user_bloc.dart';
 import 'package:pilasconelhueco/screens/DataScreen.dart';
 import 'package:pilasconelhueco/screens/otherApps.dart';
 import 'package:pilasconelhueco/screens/reports.dart';
+import 'package:pilasconelhueco/shared/service_locator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/Report.dart';
 import '../screens/contact.dart';
@@ -67,7 +69,7 @@ class _MyDrawerState extends State<MyDrawer> {
                 SizedBox(height: 10.0),
                 Center(
                   child: Text(
-                    'CARLOS GUTIERREZ',
+                    getit<UsuarioCubit>().state.nombre ?? "Ciudadano",
                     style: TextStyle(fontSize: 20.0,fontWeight: FontWeight.bold,color: ColorsPalet.primaryColor,),
                   ),
                 ),
