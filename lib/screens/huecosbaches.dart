@@ -425,6 +425,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                       _nameAndLastNameFieldController.text;
                   dataModelSecondScreen.cellphone =
                       "+${_countrycodeFieldController.text} ${_cellphoneFieldController.text}";
+                  dataModelSecondScreen.latitude = coordinates!.latitude.toString();
+                  dataModelSecondScreen.longitude = coordinates!.longitude.toString();
                   dataModelSecondScreen.email = _emailFieldController.text;
                   dataModelSecondScreen.evidences = filesSelected;
                   dataModelSecondScreen.motive = selectedOption;

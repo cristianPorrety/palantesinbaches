@@ -66,7 +66,7 @@ class _MyDrawerState extends State<MyDrawer> {
                     radius: 80,
                     backgroundImage:  currentFile.existsSync()
                         ? new FileImage(currentFile)
-                        : new AssetImage("assets/img/tittle_drawer.png") as ImageProvider,
+                        : new AssetImage("assets/img/profile.png") as ImageProvider,
                   ),
                 ),
                 SizedBox(height: 20.0),

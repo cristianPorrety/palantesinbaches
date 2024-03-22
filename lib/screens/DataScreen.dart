@@ -153,7 +153,7 @@ class _DataScreenState extends State<DataScreen> {
                         radius: 50,
                         backgroundImage:  currentFile.existsSync()
                             ? new FileImage(currentFile)
-                            : new AssetImage("assets/img/tittle_drawer.png") as ImageProvider,
+                            : new AssetImage("assets/img/profile.png") as ImageProvider,
                         child: (isEditing) ?  Icon(
                           Icons.camera_alt,
                           color: Colors.grey,
