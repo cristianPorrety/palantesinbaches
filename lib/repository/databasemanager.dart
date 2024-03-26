@@ -51,6 +51,7 @@ class DatabaseManipulator {
         'celular TEXT, '
         'correoElectronico TEXT, '
         'genero TEXT, '
+        'profilePic TEXT, '
         'fechaNacimiento TEXT, '
         'edad INTEGER)',
       );

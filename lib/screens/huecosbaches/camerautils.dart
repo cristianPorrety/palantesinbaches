@@ -1,4 +1,4 @@
-import 'dart:ffi';
+
 import 'dart:io';
 
 import 'package:camera/camera.dart';
@@ -13,7 +13,7 @@ class CameraUtils {
   static int _maxVideos = 1;
   static final picker = ImagePicker();
 
-  static Future<void> capturePhoto(Function(File) fileadder,
+  static Future<void> capturePhoto(void Function(File) fileadder,
       List<File> files) async {
     final picker = ImagePicker();
     PickedFile? pickedFile = await picker.getImage(source: ImageSource.camera);
@@ -22,6 +22,15 @@ class CameraUtils {
       if (files.length < _maxPhotos) {
         fileadder(file);
       }
+    }
+  }
+
+  static Future<void> captureAPhoto(void Function(XFile) fileadder) async {
+    final picker = ImagePicker();
+    XFile? pickedFile = await picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      XFile file = XFile(pickedFile.path);
+      fileadder(file);
     }
   }
 
@@ -63,7 +72,17 @@ class CameraUtils {
       }
     }
   }
-}
+
+
+  static Future<void> getPicFromGallery(Function(XFile) fileadder) async {
+    final picker = ImagePicker();
+    XFile? selectedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (selectedFile != null) {
+        fileadder(selectedFile);
+      }
+    }
+  }
+
 
 class VideoRecorderPage extends StatefulWidget {
   final CameraDescription camera;

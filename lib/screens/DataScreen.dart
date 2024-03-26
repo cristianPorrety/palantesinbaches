@@ -1,4 +1,10 @@
+
+import 'dart:io';
+
+
+import 'package:camera/camera.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
@@ -6,6 +12,7 @@ import 'package:pilasconelhueco/bloc/conectivity_bloc.dart';
 import 'package:pilasconelhueco/bloc/user_bloc.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/models/usuario_model.dart';
+import 'package:pilasconelhueco/screens/huecosbaches/camerautils.dart';
 import 'package:pilasconelhueco/shared/service_locator.dart';
 import 'package:pilasconelhueco/shared/styles.dart';
 import '../shared/labels.dart';
@@ -44,6 +51,18 @@ class _DataScreenState extends State<DataScreen> {
   TextEditingController edadController = TextEditingController();
   List<String> generoOptions = ["Masculino", "Femenino", "Otro", ""];
   String selectedGenero = "";
+  XFile? fileSelected;
+  late File currentFile;
+
+
+  void setProfilePic(XFile file) {
+    setState(() {
+      fileSelected = file;
+      currentFile = File(file.path);
+    });
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -54,6 +73,7 @@ class _DataScreenState extends State<DataScreen> {
       selectedGenero = getit<UsuarioCubit>().state.genero ?? "";
       currentAge = getit<UsuarioCubit>().state.edad;
       currentDate = getit<UsuarioCubit>().state.fechaNacimiento ?? "";
+      currentFile = File(getit<UsuarioCubit>().state.profilePic ?? "");
       var dateSplitted = currentDate.split("/");
       selectedDate = currentDate.isNotEmpty ? DateTime(int.parse(dateSplitted[2]), int.parse(dateSplitted[1]), int.parse(dateSplitted[0])) : null;
     });
@@ -119,20 +139,32 @@ class _DataScreenState extends State<DataScreen> {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(top: 50.0),
-              child: Stack(
-                alignment: Alignment.bottomRight,
-                children: <Widget>[
-                  Image.asset('assets/img/profile.png'),
-                  SizedBox(height: 50),
-                  Padding(
-                    padding: EdgeInsets.all(1.0),
-                    child: Icon(
-                      Icons.camera_alt,
-                      color: Colors.grey,
-                      size: 30,
+              child: GestureDetector(
+                onTap: () {
+                  if(isEditing) {
+                    _openModal(context);
+                  }
+                },
+                child: Stack(
+                  alignment: Alignment.bottomRight,
+                  children: <Widget>[
+                    Center(
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundImage:  currentFile.existsSync()
+                            ? new FileImage(currentFile)
+                            : new AssetImage("assets/img/profile.png") as ImageProvider,
+                        child: (isEditing) ?  Icon(
+                          Icons.camera_alt,
+                          color: Colors.grey,
+                          size: 30,
+                        ) : null,
+                      ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: 50),
+
+                  ],
+                ),
               ),
             ),
             SizedBox(height: 50),
@@ -173,7 +205,7 @@ class _DataScreenState extends State<DataScreen> {
                             setState(() {
                               isEditing = false;
                             });
-                            usuarioCubit.createOrUpdateDataInfo(UsuarioReport(nombre: nombreController.text, celular: celularController.text, correoElectronico: correoElectronicoController.text, edad: currentAge,   genero: selectedGenero, fechaNacimiento: currentDate));
+                            usuarioCubit.createOrUpdateDataInfo(UsuarioReport(nombre: nombreController.text, celular: celularController.text, correoElectronico: correoElectronicoController.text, edad: currentAge,   genero: selectedGenero, fechaNacimiento: currentDate, profilePic: currentFile.path));
                           } else {
                             ToastManager.showToast(context, "Por favor, verifique que los datos ingresados sean correctos.");
                           }
@@ -334,6 +366,88 @@ class _DataScreenState extends State<DataScreen> {
           : Text(
         selectedGenero ?? '',
       ),
+    );
+  }
+
+
+  void _openModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      elevation: 4,
+      backgroundColor: ColorsPalet.backgroundColor,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+          child: ListView(
+            physics: const BouncingScrollPhysics(),
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  CameraUtils.captureAPhoto(setProfilePic);
+                },
+                child: Container(
+                  height: 80,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                      color: ColorsPalet.primaryColor,
+                      borderRadius:
+                      const BorderRadius.all(Radius.circular(10))),
+                  child: Row(
+                    children: [
+                      Icon(Icons.camera_alt,
+                          color: ColorsPalet.backgroundColor, size: 40),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      Text(
+                        "CAMARA",
+                        style: TextStyle(
+                            color: ColorsPalet.backgroundColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    CameraUtils.getPicFromGallery(setProfilePic);
+                  },
+                  child: Container(
+                    height: 80,
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    decoration: BoxDecoration(
+                        color: ColorsPalet.primaryColor,
+                        borderRadius:
+                        const BorderRadius.all(Radius.circular(10))),
+                    child: Row(
+                      children: [
+                        Icon(Icons.image,
+                            color: ColorsPalet.backgroundColor, size: 40),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Text(
+                          "GALERIA",
+                          style: TextStyle(
+                              color: ColorsPalet.backgroundColor,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 
