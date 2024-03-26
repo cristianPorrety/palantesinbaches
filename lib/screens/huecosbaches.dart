@@ -76,13 +76,11 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         print("el device id: $value");
         datamodel?.deviceId = value;
         var getCurrentLocation = _getCurrentLocation();
-        getCurrentLocation.then((value) {
-          datamodel?.currentReportLatitude = value!.latitude.toString();
-          datamodel?.currentReportLongitude = value!.longitude.toString();
-          print("conectivity status before post: ${getit<ConectivityCubit>().state.connected!}");
-          getit<DataService>().postReport(datamodel!).then((value) => _Dialog_finalizar(context));
-
-        });
+        datamodel?.currentReportLatitude = datamodel!.currentReportLatitude.toString();
+        datamodel?.currentReportLongitude = datamodel!.currentReportLongitude.toString();
+        print("conectivity status before post: ${getit<ConectivityCubit>().state.connected!}");
+        getit<DataService>().postReport(datamodel!);
+        _Dialog_finalizar(context);
       },
     );
   }
@@ -168,6 +166,10 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
 
   Future<LatLng?> _getCurrentLocation() async {
     LatLng? currentLocation = await RestMapRepository.getCurrentLocation();
+    setState(() {
+      datamodel?.currentReportLatitude = currentLocation!.latitude.toString();
+      datamodel?.currentReportLongitude = currentLocation!.longitude.toString();
+    });
     return currentLocation;
   }
 
