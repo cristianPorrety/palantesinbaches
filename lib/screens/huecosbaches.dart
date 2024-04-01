@@ -57,11 +57,13 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   late List<Widget Function()> widgets;
   LatLng? coordinates;
   bool isEmpty = false;
+  bool gpsEnabled = false;
   int index = 0;
   List<File> filesSelected = [];
   bool _isLoading = false;
   ConfirmDataModel? datamodel;
   String selectedOption = "Selecciona una opción....";
+  late LatLng currentLocation;
   var textInputFormatter =
       FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\sáéíóúÁÉÍÓÚüÜ]'));
 
@@ -75,9 +77,9 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       (value) {
         print("el device id: $value");
         datamodel?.deviceId = value;
-        var getCurrentLocation = _getCurrentLocation();
-        datamodel?.currentReportLatitude = datamodel!.currentReportLatitude.toString();
-        datamodel?.currentReportLongitude = datamodel!.currentReportLongitude.toString();
+        print("current report latitude: ${currentLocation.latitude.toString()} - current report longitude ${currentLocation.longitude.toString()}");
+        datamodel?.currentReportLatitude = currentLocation.latitude.toString();
+        datamodel?.currentReportLongitude = currentLocation.longitude.toString();
         print("conectivity status before post: ${getit<ConectivityCubit>().state.connected!}");
         getit<DataService>().postReport(datamodel!);
         _Dialog_finalizar(context);
@@ -137,7 +139,6 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     super.initState();
     // Initialize the variable in the initState method
     _requestLocationPermission();
-    //  _getCurrentLocationAndMark();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       print("on net change test: $result");
       getit<ConectivityCubit>().isInternetConnected(result);
@@ -164,25 +165,20 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     );
   }
 
-  Future<LatLng?> _getCurrentLocation() async {
-    LatLng? currentLocation = await RestMapRepository.getCurrentLocation();
-    setState(() {
-      datamodel?.currentReportLatitude = currentLocation!.latitude.toString();
-      datamodel?.currentReportLongitude = currentLocation!.longitude.toString();
-    });
-    return currentLocation;
-  }
 
   void _getCurrentLocationAndMark() async {
-    LatLng? currentLocation = await RestMapRepository.getCurrentLocation();
-    if (currentLocation != null) {
-      _addMarker(currentLocation);
-      setAddressByLatIng(currentLocation);
-      setLatLng(currentLocation);
+    LatLng? currentLocationObtained = await RestMapRepository.getCurrentLocation();
+    if (currentLocationObtained != null) {
+      _addMarker(currentLocationObtained);
+      setAddressByLatIng(currentLocationObtained);
+      setLatLng(currentLocationObtained);
+      setState(() {
+        currentLocation = currentLocationObtained;
+      });
       mapController.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
-            target: currentLocation,
+            target: currentLocationObtained,
             zoom: 15,
           ),
         ),
@@ -195,8 +191,14 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     final PermissionStatus status = await Permission.location.request();
     if (status == PermissionStatus.granted) {
       print('Permiso de ubicación concedido.');
+      setState(() {
+        gpsEnabled = true;
+      });
       _getCurrentLocationAndMark(); // Call this method when permission is granted
     } else if (status == PermissionStatus.denied) {
+      setState(() {
+        gpsEnabled = false;
+      });
       print('Permiso de ubicación denegado.');
       setState(() {
         _permissionDenied = true;
@@ -204,6 +206,9 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       _showPermissionDeniedToast(context);
     } else {
       print('Permiso de ubicación denegado permanentemente.');
+      setState(() {
+        gpsEnabled = false;
+      });
       setState(() {
         _permissionDenied = true;
       });
@@ -596,7 +601,11 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 200),
-          child: MapFragment(),
+          child: (gpsEnabled) ?
+          MapFragment()
+          : SizedBox(
+            child: Center(child: Text("Debe activar el permiso de ubicación", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: ColorsPalet.primaryColor),)),
+          ),
         ),
         DraggableScrollableSheet(
           initialChildSize: 0.5, // Tamaño inicial del sheet
