@@ -77,9 +77,10 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       (value) {
         print("el device id: $value");
         datamodel?.deviceId = value;
-        print("current report latitude: ${currentLocation.latitude.toString()} - current report longitude ${currentLocation.longitude.toString()}");
-        datamodel?.currentReportLatitude = currentLocation.latitude.toString();
-        datamodel?.currentReportLongitude = currentLocation.longitude.toString();
+        datamodel?.latitude = currentLocation.latitude.toString();
+        datamodel?.longitude = currentLocation.longitude.toString();
+        print("current report latitude: ${datamodel!.currentReportLatitude.toString()} - current report longitude ${datamodel!.currentReportLongitude.toString()}");
+        print("current user latitude: ${datamodel!.latitude.toString()} - current user longitude ${datamodel!.longitude.toString()}");
         print("conectivity status before post: ${getit<ConectivityCubit>().state.connected!}");
         getit<DataService>().postReport(datamodel!);
         _Dialog_finalizar(context);
@@ -172,7 +173,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       _addMarker(currentLocationObtained);
       setAddressByLatIng(currentLocationObtained);
       setLatLng(currentLocationObtained);
-      setState(() {
+      setState((  ) {
         currentLocation = currentLocationObtained;
       });
       mapController.animateCamera(
@@ -402,8 +403,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                   dataModelFirstScreen.address = _directionFieldController.text;
                   dataModelFirstScreen.observation =
                       _obsercationFieldController.text;
-                  dataModelFirstScreen.latitude = coordinates!.latitude.toString();
-                  dataModelFirstScreen.longitude = coordinates!.longitude.toString();
+                  dataModelFirstScreen.currentReportLatitude = coordinates!.latitude.toString();
+                  dataModelFirstScreen.currentReportLongitude = coordinates!.longitude.toString();
                   datamodel = dataModelFirstScreen;
                   index++;
                 });
@@ -432,8 +433,8 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                       _nameAndLastNameFieldController.text;
                   dataModelSecondScreen.cellphone =
                       "+${_countrycodeFieldController.text} ${_cellphoneFieldController.text}";
-                  dataModelSecondScreen.latitude = coordinates!.latitude.toString();
-                  dataModelSecondScreen.longitude = coordinates!.longitude.toString();
+                  dataModelSecondScreen.currentReportLatitude = coordinates!.latitude.toString();
+                  dataModelSecondScreen.currentReportLongitude = coordinates!.longitude.toString();
                   dataModelSecondScreen.email = _emailFieldController.text;
                   dataModelSecondScreen.evidences = filesSelected;
                   dataModelSecondScreen.motive = selectedOption;

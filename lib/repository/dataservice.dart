@@ -17,20 +17,36 @@ class DataService {
     if(!getit<ConectivityCubit>().state.connected!){
       var reportsLocal = await getit<DatabaseManipulator>().getReports();
       print("reports obtained: $reportsLocal");
-      return reportsLocal.map((e) => e.copyOf(reportId: e.onServer == 0 ? "pendiente" : e.reportId)).toList();
+      reportsLocal.sort((a, b) {
+        final aDateTime = DateTime.parse(a.reportDate!);
+        final bDateTime = DateTime.parse(b.reportDate!);
+        return aDateTime.compareTo(bDateTime);
+      },);
+
+      return reportsLocal.reversed.toList().map((e) => e.copyOf(reportId: e.onServer == 0 ? "pendiente" : e.reportId)).toList();
     }
 
     var reports = await getit<RestOperations>().getReports(deviceIdModel);
     print("reports obtained: $reports");
     if(reports.isNotEmpty && !reports[0].loaded!) {
       var reportsLocal = await getit<DatabaseManipulator>().getReports();
-      return reportsLocal.map((e) => e.copyOf(reportId: e.onServer == 0 ? "pendiente" : e.reportId)).toList();
+      reportsLocal.sort((a, b) {
+        final aDateTime = DateTime.parse(a.reportDate!);
+        final bDateTime = DateTime.parse(b.reportDate!);
+        return aDateTime.compareTo(bDateTime);
+      },);
+      return reportsLocal.reversed.toList().map((e) => e.copyOf(reportId: e.onServer == 0 ? "pendiente" : e.reportId)).toList();
     }
 
     await saveReportsFromRemote(List.of(reports));
 
     var reportsLocal = await getit<DatabaseManipulator>().getReports();
-    return reportsLocal.map((e) => e.copyOf(reportId: e.onServer == 0 ? "pendiente" : e.reportId)).toList();
+    reportsLocal.sort((a, b) {
+      final aDateTime = DateTime.parse(a.reportDate!);
+      final bDateTime = DateTime.parse(b.reportDate!);
+      return aDateTime.compareTo(bDateTime);
+    },);
+    return reportsLocal.reversed.toList().map((e) => e.copyOf(reportId: e.onServer == 0 ? "pendiente" : e.reportId)).toList();
 
   }
 
