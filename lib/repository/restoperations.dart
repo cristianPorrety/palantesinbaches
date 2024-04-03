@@ -28,7 +28,7 @@ class RestOperations {
         return Map<String, dynamic>.from(jsonObject); // Convert each element into a Map<String, dynamic>
       }).toList();
       List<ConfirmDataModel> confirmData = (listOfMaps).map((e) => ConfirmDataModel.fromMap(e)).toList();
-      print(confirmData);
+      print("server response data: $confirmData");
       return confirmData;
     } on TimeoutException catch (_) {
       print(_);
@@ -43,23 +43,25 @@ class RestOperations {
     return [ConfirmDataModel()..loaded = false];
   }
 
-  Future<bool> postReport(ConfirmDataModel dataModel) async{
+  Future<String> postReport(ConfirmDataModel dataModel) async{
 
     print("data model to post: ${dataModel.toMap()}");
     print("endpoint: $backendHost/persist");
 
     try {Response response = await dio.post('$backendHost/persist', data: dataModel.toMap()).timeout(const Duration(seconds: 10));
     print("code obtained in post: ${response.statusCode}");
+    print("server response data: ${response.data}");
+    Map<String, dynamic> data = Map<String, dynamic>.from(jsonDecode(response.data));
     if(response.statusCode != 200) {
-      return false;
+      return "ERROR";
     }
-    return true;
+    return data["status"];
     } on TimeoutException catch (_) {
       print(_);
-      return false;
+      return "ERROR";
     } on Exception catch(ex) {
       print(ex);
-      return false;
+      return "";
     }
   }
 

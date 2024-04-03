@@ -82,8 +82,13 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         print("current report latitude: ${datamodel!.currentReportLatitude.toString()} - current report longitude ${datamodel!.currentReportLongitude.toString()}");
         print("current user latitude: ${datamodel!.latitude.toString()} - current user longitude ${datamodel!.longitude.toString()}");
         print("conectivity status before post: ${getit<ConectivityCubit>().state.connected!}");
-        getit<DataService>().postReport(datamodel!);
-        _Dialog_finalizar(context);
+        getit<DataService>().postReport(datamodel!).then((status)
+        {
+          setState(() {
+            _isLoading = false;
+          });
+          _Dialog_finalizar(context, status);
+        });
       },
     );
   }
@@ -469,7 +474,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     );
   }
 
-  void _Dialog_finalizar(BuildContext context) {
+  void _Dialog_finalizar(BuildContext context, String status) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -495,7 +500,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      DialogFinalizarText.reportcompleted,
+                      (status != "LOCATION_REPORT_NOT_VALID") ? DialogFinalizarText.reportcompleted : "El sitio reportado no hace parte de santa marta",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: ColorsPalet.primaryColor,
@@ -503,7 +508,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                       ),
                     ),
                     SizedBox(height: 10.0),
-                    getit<ConectivityCubit>().state.connected! ?
+                    status == "SUCCESS" ?
                     Center(
                       child: Text(
                         "Número de reporte: ${datamodel!.reportId}",
@@ -522,6 +527,10 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
           actions: <Widget>[
             ElevatedButton(
               onPressed: () {
+                if(status == "LOCATION_REPORT_NOT_VALID") {
+                  Navigator.pop(context);
+                  return;
+                }
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => HomeScreen()),

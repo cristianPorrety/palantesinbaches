@@ -58,18 +58,21 @@ class DataService {
     }
   }
 
-  Future<bool> postReport(ConfirmDataModel dataModel) async {
+  Future<String> postReport(ConfirmDataModel dataModel) async {
     if(!getit<ConectivityCubit>().state.connected!) {
       print("no está conectado");
       getit<DatabaseManipulator>().createReport(dataModel..onServer = 0);
-      return true;
+      return "SAVED_LOCALLY";
     }
     print("esta conectado");
-    bool saveReportFromRest = await getit<RestOperations>().postReport(dataModel);
-    if(!saveReportFromRest) {
+    String saveReportFromRest = await getit<RestOperations>().postReport(dataModel);
+    if(saveReportFromRest == "LOCATION_REPORT_NOT_VALID") {
+      return saveReportFromRest;
+    }
+    if(saveReportFromRest != "SUCCESS") {
       print("no se pudo enviar");
       getit<DatabaseManipulator>().createReport(dataModel..onServer = 0);
-      return true;
+      return "SAVED_LOCALLY";
     }
 
     if(await getit<DatabaseManipulator>().thereIsReports()) {
