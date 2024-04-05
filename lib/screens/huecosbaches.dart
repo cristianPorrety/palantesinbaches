@@ -10,6 +10,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pilasconelhueco/bloc/conectivity_bloc.dart';
+import 'package:pilasconelhueco/bloc/motive_bloc.dart';
 import 'package:pilasconelhueco/bloc/user_bloc.dart';
 import 'package:pilasconelhueco/home/homepage.dart';
 import 'package:pilasconelhueco/models/ReportSaveModel.dart';
@@ -51,6 +52,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   final TextEditingController _cellphoneFieldController =
       TextEditingController();
   final TextEditingController _emailFieldController = TextEditingController();
+  final TextEditingController _anotherMotiveFieldController = TextEditingController();
   String emailText = "";
   String cellphoneText = "";
   String nombreText = "";
@@ -62,7 +64,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   List<File> filesSelected = [];
   bool _isLoading = false;
   ConfirmDataModel? datamodel;
-  String selectedOption = "Selecciona una opción....";
+  String? selectedOption = null;
   late LatLng currentLocation;
   var textInputFormatter =
       FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\sáéíóúÁÉÍÓÚüÜ]'));
@@ -79,11 +81,13 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         datamodel?.deviceId = value;
         datamodel?.latitude = currentLocation.latitude.toString();
         datamodel?.longitude = currentLocation.longitude.toString();
-        print("current report latitude: ${datamodel!.currentReportLatitude.toString()} - current report longitude ${datamodel!.currentReportLongitude.toString()}");
-        print("current user latitude: ${datamodel!.latitude.toString()} - current user longitude ${datamodel!.longitude.toString()}");
-        print("conectivity status before post: ${getit<ConectivityCubit>().state.connected!}");
-        getit<DataService>().postReport(datamodel!).then((status)
-        {
+        print(
+            "current report latitude: ${datamodel!.currentReportLatitude.toString()} - current report longitude ${datamodel!.currentReportLongitude.toString()}");
+        print(
+            "current user latitude: ${datamodel!.latitude.toString()} - current user longitude ${datamodel!.longitude.toString()}");
+        print(
+            "conectivity status before post: ${getit<ConectivityCubit>().state.connected!}");
+        getit<DataService>().postReport(datamodel!).then((status) {
           setState(() {
             _isLoading = false;
           });
@@ -148,7 +152,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       print("on net change test: $result");
       getit<ConectivityCubit>().isInternetConnected(result);
-    }); 
+    });
     widgets = [_mapWithDirectionBody, _moreData, _confirmData];
     nombreText = getit<UsuarioCubit>().state.nombre ?? "";
     emailText = getit<UsuarioCubit>().state.correoElectronico ?? "";
@@ -171,14 +175,14 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     );
   }
 
-
   void _getCurrentLocationAndMark() async {
-    LatLng? currentLocationObtained = await RestMapRepository.getCurrentLocation();
+    LatLng? currentLocationObtained =
+        await RestMapRepository.getCurrentLocation();
     if (currentLocationObtained != null) {
       _addMarker(currentLocationObtained);
       setAddressByLatIng(currentLocationObtained);
       setLatLng(currentLocationObtained);
-      setState((  ) {
+      setState(() {
         currentLocation = currentLocationObtained;
       });
       mapController.animateCamera(
@@ -240,7 +244,6 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60.0),
@@ -408,8 +411,10 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                   dataModelFirstScreen.address = _directionFieldController.text;
                   dataModelFirstScreen.observation =
                       _obsercationFieldController.text;
-                  dataModelFirstScreen.currentReportLatitude = coordinates!.latitude.toString();
-                  dataModelFirstScreen.currentReportLongitude = coordinates!.longitude.toString();
+                  dataModelFirstScreen.currentReportLatitude =
+                      coordinates!.latitude.toString();
+                  dataModelFirstScreen.currentReportLongitude =
+                      coordinates!.longitude.toString();
                   datamodel = dataModelFirstScreen;
                   index++;
                 });
@@ -426,7 +431,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                   !_isValidEmail(_emailFieldController.text)) {
                 ToastManager.showToast(context,
                     "Los datos ingresados no son correctos, o están incompletos");
-              } else if (selectedOption == "Selecciona una opción....") {
+              } else if (selectedOption == null) {
                 ToastManager.showToast(
                     context, "Por favor seleccione una motivo de daño. ");
               } else {
@@ -438,14 +443,17 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                       _nameAndLastNameFieldController.text;
                   dataModelSecondScreen.cellphone =
                       "+${_countrycodeFieldController.text} ${_cellphoneFieldController.text}";
-                  dataModelSecondScreen.currentReportLatitude = coordinates!.latitude.toString();
-                  dataModelSecondScreen.currentReportLongitude = coordinates!.longitude.toString();
+                  dataModelSecondScreen.currentReportLatitude =
+                      coordinates!.latitude.toString();
+                  dataModelSecondScreen.currentReportLongitude =
+                      coordinates!.longitude.toString();
                   dataModelSecondScreen.email = _emailFieldController.text;
                   dataModelSecondScreen.evidences = filesSelected;
                   dataModelSecondScreen.motive = selectedOption;
                   dataModelSecondScreen.reportDate = DateTime.now().toString();
                   String uuid = Uuid().v4().toUpperCase();
-                  dataModelSecondScreen.reportId = "RE${uuid.substring(uuid.length - 11)}";
+                  dataModelSecondScreen.reportId =
+                      "RE${uuid.substring(uuid.length - 11)}";
                   datamodel = dataModelSecondScreen;
                   index++;
                 });
@@ -500,7 +508,9 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      (status != "LOCATION_REPORT_NOT_VALID") ? DialogFinalizarText.reportcompleted : "El sitio reportado no hace parte de santa marta",
+                      (status != "LOCATION_REPORT_NOT_VALID")
+                          ? DialogFinalizarText.reportcompleted
+                          : "Atencion: Daño fuera del área de cobertura. Por favor revise.",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: ColorsPalet.primaryColor,
@@ -508,17 +518,18 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
                       ),
                     ),
                     SizedBox(height: 10.0),
-                    status == "SUCCESS" ?
-                    Center(
-                      child: Text(
-                        "Número de reporte: ${datamodel!.reportId}",
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black45,
-                        ),
-                      ),
-                    ) : SizedBox()
+                    status == "SUCCESS"
+                        ? Center(
+                            child: Text(
+                              "Número de reporte: ${datamodel!.reportId}",
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black45,
+                              ),
+                            ),
+                          )
+                        : SizedBox()
                   ],
                 ),
               ),
@@ -527,7 +538,10 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
           actions: <Widget>[
             ElevatedButton(
               onPressed: () {
-                if(status == "LOCATION_REPORT_NOT_VALID") {
+                if (status == "LOCATION_REPORT_NOT_VALID") {
+                  setState(() {
+                    index = 0;
+                  });
                   Navigator.pop(context);
                   return;
                 }
@@ -601,7 +615,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         markers: markers,
         mapType: MapType.normal,
         initialCameraPosition:
-            const CameraPosition(target: staMarta, zoom: defaultZoom),
+            CameraPosition(target: (coordinates == null) ? staMarta : coordinates!, zoom: defaultZoom),
       ),
     );
   }
@@ -611,11 +625,18 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 200),
-          child: (gpsEnabled) ?
-          MapFragment()
-          : SizedBox(
-            child: Center(child: Text("Debe activar el permiso de ubicación", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: ColorsPalet.primaryColor),)),
-          ),
+          child: (gpsEnabled)
+              ? MapFragment()
+              : SizedBox(
+                  child: Center(
+                      child: Text(
+                    "Debe activar el permiso de ubicación",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: ColorsPalet.primaryColor),
+                  )),
+                ),
         ),
         DraggableScrollableSheet(
           initialChildSize: 0.5, // Tamaño inicial del sheet
@@ -954,22 +975,21 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         children: [
           TextField(
             controller: _directionFieldController,
-
             decoration: InputDecoration(
-              suffixIcon: IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: () {
-                      if (_directionFieldController.text.isEmpty) {
-                        ToastManager.showToast(context,
-                            "El campo de dirección no puede estar vacío.");
-                      } else {
-                        RestMapRepository.getCoordinates(
-                            _directionFieldController.text,
-                            mapController,
-                            context);
-                      }
-                    },
-              ),
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    if (_directionFieldController.text.isEmpty) {
+                      ToastManager.showToast(context,
+                          "El campo de dirección no puede estar vacío.");
+                    } else {
+                      RestMapRepository.getCoordinates(
+                          _directionFieldController.text,
+                          mapController,
+                          context);
+                    }
+                  },
+                ),
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: ColorsPalet.primaryColor)),
                 errorText: (isEmpty) ? 'Credenciales Incorrectas' : null,
@@ -1103,12 +1123,13 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
               ),*/
               GestureDetector(
                 onTap: () {
-                  if(filesSelected.length < 2) {
+                  if (filesSelected.length < 2) {
                     Navigator.pop(context);
                     CameraUtils.capturePhoto(addFile, filesSelected);
                   } else {
                     Navigator.pop(context);
-                    ToastManager.showToastOnTop(context, "Ya ha llegado al maximo de evidencias.");
+                    ToastManager.showToastOnTop(
+                        context, "Ya ha llegado al maximo de evidencias.");
                   }
                 },
                 child: Container(
@@ -1145,7 +1166,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
 
   Widget _NameLastNameTextField() {
     _nameAndLastNameFieldController.text = nombreText;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10, top: 10),
       decoration: BoxDecoration(
@@ -1298,12 +1319,16 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   Widget _MotiveTextField() {
     return GestureDetector(
       onTap: () async {
-        final selected = await getModalScreen();
-        if (selected != null) {
+        String? selected = await getModalScreen();
+        if (selected == "OTROS") {
+          selected = await getOtherText();
           setState(() {
-            selectedOption = selected;
+            selected = selected!.isEmpty ? null : selected;
           });
         }
+        setState(() {
+          selectedOption = selected;
+        });
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 10, top: 10),
@@ -1321,7 +1346,9 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               //Se almacena la opción se leccionada
-              Text(selectedOption),
+              Text(selectedOption == null
+                  ? "Selecciona una opción...."
+                  : selectedOption!),
               Icon(Icons.arrow_right),
             ],
           ),
@@ -1343,61 +1370,72 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
             width: 300,
             height: 400,
             child: CupertinoScrollbar(
-              child: ListView(
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  ListTile(
-                    title: Text('Condiciones climáticas o inundaciones'),
+              child: ListView.builder(
+                itemCount: getit<MotivesCubit>().state.length,
+                itemBuilder: (context, index) {
+                  print("motive: ${getit<MotivesCubit>().state[index]}");
+                  return ListTile(
+                    title: Text(getit<MotivesCubit>().state[index].name!),
                     onTap: () {
                       Navigator.pop(
-                          context, 'Condiciones climáticas o inundaciones');
+                          context, getit<MotivesCubit>().state[index].name!);
                     },
-                  ),
-                  ListTile(
-                    title: Text('Envejecimiento'),
-                    onTap: () {
-                      Navigator.pop(context, 'Envejecimiento');
-                    },
-                  ),
-                  ListTile(
-                    title: Text('Falla en el diseño'),
-                    onTap: () {
-                      Navigator.pop(context, 'Falla en el diseño');
-                    },
-                  ),
-                  ListTile(
-                    title: Text('Falla en el mantenimiento'),
-                    onTap: () {
-                      Navigator.pop(context, 'Falla en el mantenimiento');
-                    },
-                  ),
-                  ListTile(
-                    title: Text('Tráfico pesado'),
-                    onTap: () {
-                      Navigator.pop(context, 'Tráfico pesado');
-                    },
-                  ),
-                  ListTile(
-                    title: Text('Vandalismo'),
-                    onTap: () {
-                      Navigator.pop(context, 'Vandalismo');
-                    },
-                  ),
-                  ListTile(
-                    title: Text('Vegetación no controlada'),
-                    onTap: () {
-                      Navigator.pop(context, 'Vegetación no controlada');
-                    },
-                  ),
-                  ListTile(
-                    title: Text('Otro'),
-                    onTap: () {
-                      Navigator.pop(context, 'Otro');
-                    },
-                  ),
-                ],
+                  );
+                },
               ),
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<String?> getOtherText() {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('OTRO MOTIVO',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: ColorsPalet.primaryColor)),
+          content: SizedBox(
+            width: 300,
+            height: 200,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextField(
+                  controller: _anotherMotiveFieldController,
+                  decoration: const InputDecoration(
+                    hintText: "Escribe otro motivo",
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                      Navigator.pop(context, _anotherMotiveFieldController.text);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorsPalet.primaryColor,
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    child: Text(
+                      'Aceptar',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white, // Color del texto
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
           ),
         );
       },
@@ -1412,47 +1450,59 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
         children: [
           GestureDetector(
             onTap: () {
-              if(filesSelected.length < 2) {
+              if (filesSelected.length < 2) {
                 _openModal(context);
               } else {
-                ToastManager.showToast(context, "Ya ha llegado al maximo de evidencias.");
+                ToastManager.showToast(
+                    context, "Ya ha llegado al maximo de evidencias.");
               }
             },
             child: Container(
               decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                   color: ColorsPalet.backgroundColor,
-                  border: Border.all(color: (filesSelected.length < 2) ? ColorsPalet.primaryColor : Colors.grey)),
+                  border: Border.all(
+                      color: (filesSelected.length < 2)
+                          ? ColorsPalet.primaryColor
+                          : Colors.grey)),
               height: 40,
               width: 140,
               child: Center(
                   child: Text(
                 "Tomar Evidencia",
                 style: TextStyle(
-                    color: (filesSelected.length < 2) ? ColorsPalet.primaryColor : Colors.grey,
+                    color: (filesSelected.length < 2)
+                        ? ColorsPalet.primaryColor
+                        : Colors.grey,
                     fontWeight: FontWeight.bold),
               )),
             ),
           ),
           GestureDetector(
             onTap: () {
-              if(filesSelected.length < 2) {
-                CameraUtils.getMedia(addMultipleFiles, filesSelected,context);
+              if (filesSelected.length < 2) {
+                CameraUtils.getMedia(addMultipleFiles, filesSelected, context);
               } else {
-                ToastManager.showToast(context, "Ya ha llegado al maximo de evidencias.");
+                ToastManager.showToast(
+                    context, "Ya ha llegado al maximo de evidencias.");
               }
             },
             child: Container(
               decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                   color: ColorsPalet.backgroundColor,
-                  border: Border.all(color: (filesSelected.length < 2) ? ColorsPalet.primaryColor : Colors.grey)),
+                  border: Border.all(
+                      color: (filesSelected.length < 2)
+                          ? ColorsPalet.primaryColor
+                          : Colors.grey)),
               height: 40,
               width: 140,
               child: Center(
                   child: Text("Galeria",
                       style: TextStyle(
-                          color: (filesSelected.length < 2) ? ColorsPalet.primaryColor : Colors.grey,
+                          color: (filesSelected.length < 2)
+                              ? ColorsPalet.primaryColor
+                              : Colors.grey,
                           fontWeight: FontWeight.bold))),
             ),
           ),

@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:pilasconelhueco/bloc/conectivity_bloc.dart';
 import 'package:pilasconelhueco/models/ReportSaveModel.dart';
+import 'package:pilasconelhueco/models/motive_model.dart';
 
 class RestOperations {
 
@@ -64,5 +65,37 @@ class RestOperations {
       return "";
     }
   }
+
+
+  Future<List<MotiveModel>> getParametry() async{
+    try {
+      Response response = await dio.post('$backendHost/parametry').timeout(const Duration(seconds: 4));
+      print("code obtained in post: ${response.statusCode}");
+      //(response.data["data"] as List);
+      print("code obtained in post: ${jsonDecode(response.data as String)}");
+      if(response.statusCode != 200) {
+        return [MotiveModel()..code = "ERROR"];
+      }
+      Map<String, dynamic> motiveData = jsonDecode(response.data as String);
+      //print(dataInRaw);
+      List<dynamic> jsonList = motiveData["data"]["motives"];
+      List<Map<String, dynamic>> listOfMaps = jsonList.map((jsonObject) {
+        return Map<String, dynamic>.from(jsonObject); // Convert each element into a Map<String, dynamic>
+      }).toList();
+      List<MotiveModel> confirmData = (listOfMaps).map((e) => MotiveModel.fromMap(e)).toList();
+      print("server response data: $confirmData");
+      return confirmData;
+    } on TimeoutException catch (_) {
+      print(_);
+      return [MotiveModel()..code = "ERROR"];
+    } on DioException catch (dx) {
+      print(dx);
+      return [MotiveModel()..code = "ERROR"];
+    } on Exception catch(ex) {
+      print(ex);
+      return [MotiveModel()..code = "ERROR"];;
+    }
+  }
+
 
 }

@@ -2,6 +2,7 @@
 
 import 'package:get_it/get_it.dart';
 import 'package:pilasconelhueco/bloc/conectivity_bloc.dart';
+import 'package:pilasconelhueco/bloc/motive_bloc.dart';
 import 'package:pilasconelhueco/bloc/user_bloc.dart';
 import 'package:pilasconelhueco/repository/databasemanager.dart';
 import 'package:pilasconelhueco/repository/dataservice.dart';
@@ -15,6 +16,7 @@ void registerSingletons() {
   getit.registerSingleton(ConectivityCubit()..getConectivityStatus());
   getit.registerSingleton(DatabaseManipulator()..initializeDB().then((value) => getit<UsuarioCubit>().getUserInfoIfThereis()));
   getit.registerSingleton(RestOperations());
-  getit.registerSingleton(DataService());
+  getit.registerSingleton(DataService()..getParametry());
+  getit.registerSingleton(MotivesCubit());
 }
 

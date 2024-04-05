@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pilasconelhueco/bloc/conectivity_bloc.dart';
+import 'package:pilasconelhueco/bloc/motive_bloc.dart';
 import 'package:pilasconelhueco/bloc/user_bloc.dart';
 import 'package:pilasconelhueco/screens/splash_screen.dart';
 import 'package:pilasconelhueco/shared/service_locator.dart';
@@ -20,7 +21,8 @@ class BlocProviders extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => getit<UsuarioCubit>(), lazy: true,),
-        BlocProvider(create: (context) => getit<ConectivityCubit>(),)
+        BlocProvider(create: (context) => getit<ConectivityCubit>(),),
+        BlocProvider(create: (context) => getit<MotivesCubit>(),),
       ], 
       child: const MyApp()
     );
