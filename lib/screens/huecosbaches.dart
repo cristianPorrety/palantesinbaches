@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +62,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
   bool isEmpty = false;
   bool gpsEnabled = false;
   int index = 0;
-  List<File> filesSelected = [];
+  List<XFile> filesSelected = [];
   bool _isLoading = false;
   ConfirmDataModel? datamodel;
   String? selectedOption = null;
@@ -120,7 +121,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     });
   }
 
-  void addFile(File file) {
+  void addFile(XFile file) {
     setState(() {
       filesSelected.add(file);
     });
@@ -132,7 +133,7 @@ class _ReportPotholesScreenState extends State<ReportPotholesScreen> {
     });
   }
 
-  void addMultipleFiles(List<File> files) {
+  void addMultipleFiles(List<XFile> files) {
     setState(() {
       filesSelected.addAll(files);
     });

@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pilasconelhueco/models/conectivity_status.dart';
+import 'package:pilasconelhueco/repository/databasemanager.dart';
 import 'package:pilasconelhueco/repository/dataservice.dart';
 import 'package:pilasconelhueco/shared/service_locator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,7 +30,12 @@ class ConectivityCubit extends Cubit<ConectivityStatus> {
       return;
     } else if (result == ConnectivityResult.mobile ||
         result == ConnectivityResult.wifi) {
-      getit<DataService>().sendReportNotSent();
+      getit<DatabaseManipulator>().thereIsReports()
+          .then((value) async {
+          if (value) {
+            await getit<DataService>().sendReportNotSent();
+          }
+        });
       saveConectivity(true);
       return;
     }

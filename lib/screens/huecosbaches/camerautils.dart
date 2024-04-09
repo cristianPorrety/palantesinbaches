@@ -13,14 +13,13 @@ class CameraUtils {
   static int _maxVideos = 1;
   static final picker = ImagePicker();
 
-  static Future<void> capturePhoto(void Function(File) fileadder,
-      List<File> files) async {
+  static Future<void> capturePhoto(void Function(XFile) fileadder,
+      List<XFile> files) async {
     final picker = ImagePicker();
-    PickedFile? pickedFile = await picker.getImage(source: ImageSource.camera);
+    XFile? pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
-      File file = File(pickedFile.path);
       if (files.length < _maxPhotos) {
-        fileadder(file);
+        fileadder(pickedFile);
       }
     }
   }
@@ -54,8 +53,8 @@ class CameraUtils {
     }
   }
 
-  static Future<void> getMedia(Function(List<File>) fileadder,
-      List<File> files, BuildContext context) async {
+  static Future<void> getMedia(Function(List<XFile>) fileadder,
+      List<XFile> files, BuildContext context) async {
     final picker = ImagePicker();
     List<XFile>? selectedFiles = await picker.pickMultiImage(
       maxWidth: 1920, // Limita el ancho de las imágenes seleccionadas
@@ -63,9 +62,8 @@ class CameraUtils {
       imageQuality: 80, // Calidad de la imagen (0 a 100)
     );
     if (selectedFiles != null) {
-      List<File> filesParsed = selectedFiles.map((e) => File(e.path)).toList();
-      if (files.length + filesParsed.length <= _maxPhotos) {
-        fileadder(filesParsed);
+      if (files.length + selectedFiles.length <= _maxPhotos) {
+        fileadder(selectedFiles);
       } else {
         ToastManager.showToast(
             context, "El número máximo de fotos permitidas es $_maxPhotos");

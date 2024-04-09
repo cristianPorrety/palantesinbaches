@@ -3,8 +3,15 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:archive/archive_io.dart';
+import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pilasconelhueco/bloc/conectivity_bloc.dart';
 import 'package:pilasconelhueco/models/ReportSaveModel.dart';
 import 'package:pilasconelhueco/models/motive_model.dart';
@@ -97,5 +104,32 @@ class RestOperations {
     }
   }
 
+
+  Future<String> sendFiles(File file, String reportId, String deviceId) async{
+
+    print("endpoint: $backendHost/report-media?report=$reportId&device=$deviceId");
+
+    String fileName = file.path.split('/').last;
+    Uint8List binary = await file.readAsBytes();
+    //FormData formData = FormData.fromBytes(binaryData);
+    String fileExtension = file.path.split(".").last;
+    try {
+      final response = 
+        await dio.post("$backendHost/report-media", 
+            data: Stream.fromIterable(binary.map((e) => [e])), 
+            queryParameters: {"report": reportId, "ext": fileExtension, "device": deviceId},
+            options: Options(contentType: "application/zip"));
+      if(response.statusCode != 200) {
+        return "ERROR";
+      }
+      return "SUCCESS";
+    } on TimeoutException catch (_) {
+      print("timeout error on post report: $_");
+      return "ERROR";
+    } on Exception catch(ex) {
+      print("error error on post report: $ex");
+      return "";
+    }
+  }
 
 }

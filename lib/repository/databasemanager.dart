@@ -55,10 +55,38 @@ class DatabaseManipulator {
         'fechaNacimiento TEXT, '
         'edad INTEGER)',
       );
+      await database.execute(
+        'CREATE TABLE file_report('
+        'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+        'file_path TEXT, '
+        'device_id TEXT, '
+        'report_id TEXT)',
+      );
      },
      version: 1,
     );
   }
+
+
+  Future<List<Map<String, dynamic>>> getReportFiles() async {
+    final List<Map<String, Object?>> queryResult =
+    await db.query('file_report');
+    print('reports files saved locally: $queryResult');
+    return queryResult;
+  }
+
+  Future<void> deleteReportFile(String reportId) async {
+    await db.delete("file_report", where: "report_id = ?", whereArgs: [reportId]);
+  }
+
+
+  Future<void> createFileInfo(String filePath, String reportId, String deviceId) async {
+    print("file path: $filePath, report id: $reportId");
+    await db.insert(
+        'file_report', {"file_path": filePath, "report_id": reportId, "device_id": deviceId},
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
 
   Future<void> createUserInfo(UsuarioReport user) async {
     if(await thereIsItems()) {

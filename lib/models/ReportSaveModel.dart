@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -24,7 +25,7 @@ class ConfirmDataModel {
   String? currentReportLongitude;
   bool? loaded;
   int? onServer;
-  List<File>? evidences;
+  List<XFile>? evidences;
 
   ConfirmDataModel({
     this.id,
@@ -65,7 +66,7 @@ class ConfirmDataModel {
     String? currentReportLongitude,
     bool? loaded,
     int? onServer,
-    List<File>? evidences,
+    List<XFile>? evidences,
   }) {
     return ConfirmDataModel(
       id: id ?? this.id,
